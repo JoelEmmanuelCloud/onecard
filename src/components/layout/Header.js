@@ -1,66 +1,64 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, X, CreditCard } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function Header() {
+export default function MinimalHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   const navItems = [
-    { name: 'Home', href: '/' },
     { name: 'Features', href: '#features' },
     { name: 'Pricing', href: '#pricing' },
     { name: 'Support', href: '#support' },
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-      <div className="container-max section-padding">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-accent to-blue-600 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-primary">1necard</span>
-          </Link>
+          <a href="/" className="text-2xl font-light tracking-wide text-gray-900">
+            1necard
+          </a>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
+              <a
                 key={item.name}
                 href={item.href}
-                className="text-gray-600 hover:text-primary transition-colors duration-200 font-medium"
+                className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-light"
               >
                 {item.name}
-              </Link>
+              </a>
             ))}
           </nav>
 
-          {/* Desktop CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center space-x-6">
+            <a
               href="/activate"
-              className="text-primary hover:text-accent transition-colors duration-200 font-medium"
+              className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-light"
             >
-              Activate Card
-            </Link>
-            <Link href="#pricing" className="btn-primary">
-              Buy Card
-            </Link>
+              Activate
+            </a>
+            <a 
+              href="#pricing" 
+              className="bg-gray-900 text-white px-6 py-2 rounded-full hover:bg-gray-800 transition-colors duration-200 font-light"
+            >
+              Get Card
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
 
@@ -71,35 +69,35 @@ export default function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               className="md:hidden border-t border-gray-100 py-4"
             >
               <nav className="flex flex-col space-y-4">
                 {navItems.map((item) => (
-                  <Link
+                  <a
                     key={item.name}
                     href={item.href}
-                    className="text-gray-600 hover:text-primary transition-colors duration-200 font-medium py-2"
+                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-light py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.name}
-                  </Link>
+                  </a>
                 ))}
                 <div className="flex flex-col space-y-3 pt-4 border-t border-gray-100">
-                  <Link
+                  <a
                     href="/activate"
-                    className="text-primary hover:text-accent transition-colors duration-200 font-medium py-2"
+                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 font-light py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Activate Card
-                  </Link>
-                  <Link
+                    Activate
+                  </a>
+                  <a
                     href="#pricing"
-                    className="btn-primary text-center"
+                    className="bg-gray-900 text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors duration-200 font-light text-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Buy Card
-                  </Link>
+                    Get Card
+                  </a>
                 </div>
               </nav>
             </motion.div>
