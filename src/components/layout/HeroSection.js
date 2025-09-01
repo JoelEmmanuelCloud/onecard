@@ -50,17 +50,17 @@ export default function MinimalHero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 leading-tight mb-6"
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium text-black leading-tight mb-6"
             >
               Professional networking,
-              <span className="block font-normal">simplified</span>
+              <span className="block font-semibold">simplified</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0 font-light leading-relaxed"
+              className="text-lg text-black/80 mb-8 max-w-lg mx-auto lg:mx-0 font-normal leading-relaxed"
             >
               Share your contact details instantly with a simple tap. 
               No apps required.
@@ -75,7 +75,8 @@ export default function MinimalHero() {
               <motion.button 
                 whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-r from-gray-900 to-gray-800 text-white px-8 py-3 rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-200 font-light flex items-center justify-center shadow-lg"
+                href="#pricing" 
+                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium flex items-center justify-center shadow-lg"
               >
                 Get Your Card
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -84,7 +85,7 @@ export default function MinimalHero() {
               <motion.button 
                 whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
-                className="border border-blue-200 text-gray-700 px-8 py-3 rounded-full hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 font-light shadow-sm"
+                className="border-2 border-black text-black px-8 py-3 rounded-full hover:bg-black hover:text-white transition-all duration-200 font-medium shadow-sm"
               >
                 Learn More
               </motion.button>
@@ -95,7 +96,7 @@ export default function MinimalHero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex items-center justify-center lg:justify-start space-x-8 text-sm text-gray-500"
+              className="flex items-center justify-center lg:justify-start space-x-8 text-sm text-black/70 font-medium"
             >
               <span className="flex items-center">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
@@ -121,9 +122,9 @@ export default function MinimalHero() {
               <motion.div
                 variants={phoneVariants}
                 animate={isCardTouched ? "touched" : "initial"}
-                className="relative z-20 w-48 h-96 sm:w-56 sm:h-[450px] lg:w-64 lg:h-[520px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-2 shadow-2xl mx-auto border border-gray-700"
+                className="relative z-20 w-48 h-96 sm:w-56 sm:h-[450px] lg:w-64 lg:h-[520px] bg-black rounded-3xl p-2 shadow-2xl mx-auto"
               >
-                <div className="w-full h-full bg-white rounded-2xl overflow-hidden relative border border-gray-100"
+                <div className="w-full h-full bg-white rounded-2xl overflow-hidden relative border-2 border-black/10"
                 >
                   
                   <AnimatePresence mode="wait">
@@ -135,25 +136,25 @@ export default function MinimalHero() {
                         className="absolute inset-0 p-6"
                       >
                         {/* Status Bar */}
-                        <div className="flex justify-between items-center mb-8 text-xs text-gray-800">
+                        <div className="flex justify-between items-center mb-8 text-xs text-black font-semibold">
                           <span>9:41</span>
-                          <div className="w-6 h-3 border border-gray-800 rounded-sm">
-                            <div className="w-4 h-1 bg-gray-800 rounded-sm m-0.5"></div>
+                          <div className="w-6 h-3 border-2 border-black rounded-sm">
+                            <div className="w-4 h-1 bg-black rounded-sm m-0.5"></div>
                           </div>
                         </div>
                         
                         {/* Clean App Grid */}
                         <div className="grid grid-cols-4 gap-4 mb-8">
                           {Array.from({ length: 12 }).map((_, i) => (
-                            <div key={i} className="w-12 h-12 bg-gray-100 rounded-2xl shadow-sm"></div>
+                            <div key={i} className="w-12 h-12 bg-black/10 rounded-2xl shadow-sm border border-black/20"></div>
                           ))}
                         </div>
 
                         {/* Dock */}
                         <div className="absolute bottom-8 left-6 right-6">
-                          <div className="flex justify-center space-x-4 p-3 bg-gray-50 rounded-2xl">
+                          <div className="flex justify-center space-x-4 p-3 bg-black/5 rounded-2xl border border-black/10">
                             {Array.from({ length: 4 }).map((_, i) => (
-                              <div key={i} className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                              <div key={i} className="w-12 h-12 bg-black/20 rounded-xl border border-black/10"></div>
                             ))}
                           </div>
                         </div>
@@ -171,32 +172,32 @@ export default function MinimalHero() {
                         {/* Profile */}
                         <div className="text-center mb-8 pt-8">
                           <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
-                            <span className="text-white font-light text-lg">JS</span>
+                            <span className="text-white font-semibold text-lg">JS</span>
                           </div>
-                          <h3 className="text-xl font-light text-gray-900 mb-1">James Smith</h3>
-                          <p className="text-gray-600 text-sm">Product Designer</p>
-                          <p className="text-blue-600 text-xs font-medium">TechCorp</p>
+                          <h3 className="text-xl font-semibold text-black mb-1">James Smith</h3>
+                          <p className="text-black/80 text-sm font-medium">Product Designer</p>
+                          <p className="text-blue-600 text-xs font-semibold">TechCorp</p>
                         </div>
                         
                         {/* Contact Actions */}
                         <div className="space-y-3 mb-6">
                           {[
-                            { icon: Phone, label: 'Call', color: 'bg-emerald-50 border-emerald-100 hover:bg-emerald-100' },
-                            { icon: Mail, label: 'Email', color: 'bg-blue-50 border-blue-100 hover:bg-blue-100' },
-                            { icon: Globe, label: 'Website', color: 'bg-purple-50 border-purple-100 hover:bg-purple-100' }
+                            { icon: Phone, label: 'Call', color: 'bg-emerald-50 border-emerald-200 hover:bg-emerald-100' },
+                            { icon: Mail, label: 'Email', color: 'bg-blue-50 border-blue-200 hover:bg-blue-100' },
+                            { icon: Globe, label: 'Website', color: 'bg-purple-50 border-purple-200 hover:bg-purple-100' }
                           ].map((item, index) => (
                             <div
                               key={item.label}
-                              className={`flex items-center p-3 ${item.color} rounded-xl border transition-colors duration-200`}
+                              className={`flex items-center p-3 ${item.color} rounded-xl border-2 transition-colors duration-200`}
                             >
-                              <item.icon className="w-5 h-5 text-gray-700 mr-3" />
-                              <span className="text-gray-700 font-light">{item.label}</span>
+                              <item.icon className="w-5 h-5 text-black mr-3" />
+                              <span className="text-black font-medium">{item.label}</span>
                             </div>
                           ))}
                         </div>
 
                         {/* Save Button */}
-                        <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-light hover:from-gray-800 hover:to-gray-700 transition-all duration-200 shadow-lg">
+                        <button className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:bg-black/90 transition-all duration-200 shadow-lg">
                           Save Contact
                         </button>
                       </motion.div>
@@ -229,18 +230,18 @@ export default function MinimalHero() {
                 animate={isCardTouched ? "touching" : "initial"}
                 className="absolute top-16 -left-8 z-30"
               >
-                <div className="w-32 h-20 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div className="w-32 h-20 bg-white rounded-xl shadow-lg border-2 border-black/20 overflow-hidden">
                   <div className="p-4 h-full flex flex-col justify-between">
                     <div>
-                      <div className="text-xs font-medium text-blue-600 mb-2">1NECARD</div>
+                      <div className="text-xs font-bold text-blue-600 mb-2">1NECARD</div>
                       <div className="space-y-1">
-                        <div className="w-8 h-0.5 bg-gray-400 rounded"></div>
-                        <div className="w-6 h-0.5 bg-gray-300 rounded"></div>
+                        <div className="w-8 h-0.5 bg-black/60 rounded"></div>
+                        <div className="w-6 h-0.5 bg-black/40 rounded"></div>
                       </div>
                     </div>
                     
                     {/* NFC Chip */}
-                    <div className="absolute bottom-3 right-3 w-4 h-4 border border-blue-400 rounded-full flex items-center justify-center bg-blue-50">
+                    <div className="absolute bottom-3 right-3 w-4 h-4 border-2 border-blue-400 rounded-full flex items-center justify-center bg-blue-50">
                       <motion.div 
                         animate={isCardTouched ? {
                           scale: [1, 1.2, 1],
