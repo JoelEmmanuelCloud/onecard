@@ -1,16 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { CreditCard, User, Briefcase, Link, Camera, Eye } from 'lucide-react'
-import { signUp, createProfile, supabase } from '@/lib/supabase'
+import { User, Check, Eye, ArrowRight } from 'lucide-react'
 
-export default function ActivatePage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const cardId = searchParams.get('card') // Get card ID from URL
-  
+export default function MinimalActivatePage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -22,7 +16,8 @@ export default function ActivatePage() {
   })
   
   const [profileData, setProfileData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     jobTitle: '',
@@ -30,13 +25,11 @@ export default function ActivatePage() {
     bio: '',
     website: '',
     linkedin: '',
-    twitter: '',
-    instagram: '',
     template: 'minimal'
   })
 
   const templates = [
-    { id: 'minimal', name: 'Minimal', description: 'Clean and simple design' },
+    { id: 'minimal', name: 'Minimal', description: 'Clean and simple' },
     { id: 'modern', name: 'Modern', description: 'Bold and contemporary' },
     { id: 'classic', name: 'Classic', description: 'Professional and timeless' }
   ]
@@ -52,16 +45,11 @@ export default function ActivatePage() {
       return
     }
 
-    const { data, error } = await signUp(authData.email, authData.password, {
-      full_name: profileData.fullName
-    })
-
-    if (error) {
-      setError(error.message)
-    } else {
+    // Simulate API call
+    setTimeout(() => {
       setStep(2)
-    }
-    setLoading(false)
+      setLoading(false)
+    }, 1500)
   }
 
   const handleProfileCreation = async (e) => {
@@ -69,222 +57,178 @@ export default function ActivatePage() {
     setLoading(true)
     setError('')
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      // Generate username from name
-      const username = profileData.fullName
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .substring(0, 20)
-
-      const profile = {
-        user_id: user.id,
-        username: username,
-        full_name: profileData.fullName,
-        email: profileData.email || authData.email,
-        phone: profileData.phone,
-        job_title: profileData.jobTitle,
-        company: profileData.company,
-        bio: profileData.bio,
-        website_url: profileData.website,
-        linkedin_url: profileData.linkedin,
-        twitter_url: profileData.twitter,
-        instagram_url: profileData.instagram,
-        template_style: profileData.template
-      }
-
-      const { data, error } = await createProfile(profile)
-      
-      if (error) {
-        throw error
-      }
-
-      // Activate card if card ID is provided
-      if (cardId) {
-        await supabase
-          .from('cards')
-          .update({ 
-            user_id: user.id, 
-            is_activated: true, 
-            activated_at: new Date().toISOString() 
-          })
-          .eq('card_id', cardId)
-      }
-
+    // Simulate API call
+    setTimeout(() => {
       setStep(3)
-    } catch (err) {
-      setError(err.message)
-    }
-    setLoading(false)
+      setLoading(false)
+    }, 1500)
   }
 
   const renderStep1 = () => (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8"
     >
-      <div className="text-center mb-8">
-        <CreditCard className="w-16 h-16 text-accent mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-primary mb-2">Create Your Account</h2>
-        <p className="text-gray-600">Let's get started with your smart contact card</p>
+      <div className="text-center">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2">Create Account</h1>
+        <p className="text-gray-600 font-medium">Get started with your smart contact card</p>
       </div>
 
-      <form onSubmit={handleSignUp} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Full Name
-          </label>
-          <input
-            type="text"
-            required
-            value={profileData.fullName}
-            onChange={(e) => setProfileData({...profileData, fullName: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-            placeholder="John Smith"
-          />
+      <div className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-800 mb-2 font-semibold">First Name</label>
+            <input
+              type="text"
+              required
+              value={profileData.firstName}
+              onChange={(e) => setProfileData({...profileData, firstName: e.target.value})}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
+              placeholder="John"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-800 mb-2 font-semibold">Last Name</label>
+            <input
+              type="text"
+              required
+              value={profileData.lastName}
+              onChange={(e) => setProfileData({...profileData, lastName: e.target.value})}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
+              placeholder="Smith"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email Address
-          </label>
+          <label className="block text-sm text-gray-800 mb-2 font-semibold">Email Address</label>
           <input
             type="email"
             required
             value={authData.email}
             onChange={(e) => setAuthData({...authData, email: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
             placeholder="john@company.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Password
-          </label>
+          <label className="block text-sm text-gray-800 mb-2 font-semibold">Password</label>
           <input
             type="password"
             required
             value={authData.password}
             onChange={(e) => setAuthData({...authData, password: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
             placeholder="Create a secure password"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Confirm Password
-          </label>
+          <label className="block text-sm text-gray-800 mb-2 font-semibold">Confirm Password</label>
           <input
             type="password"
             required
             value={authData.confirmPassword}
             onChange={(e) => setAuthData({...authData, confirmPassword: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
             placeholder="Confirm your password"
           />
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg font-medium">
             {error}
           </div>
         )}
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleSignUp}
           disabled={loading}
-          className="w-full btn-primary disabled:opacity-50"
+          className="w-full bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 font-semibold flex items-center justify-center shadow-lg"
         >
-          {loading ? 'Creating Account...' : 'Create Account & Continue'}
+          {loading ? 'Creating Account...' : (
+            <>
+              Continue
+              <ArrowRight className="ml-2 w-4 h-4" />
+            </>
+          )}
         </button>
-      </form>
+      </div>
     </motion.div>
   )
 
   const renderStep2 = () => (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8"
     >
-      <div className="text-center mb-8">
-        <User className="w-16 h-16 text-accent mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-primary mb-2">Complete Your Profile</h2>
-        <p className="text-gray-600">Add your professional details and social links</p>
+      <div className="text-center">
+        <User className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2">Complete Profile</h1>
+        <p className="text-gray-600 font-medium">Add your professional details</p>
       </div>
 
-      <form onSubmit={handleProfileCreation} className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number
-            </label>
+            <label className="block text-sm text-gray-800 mb-2 font-semibold">Phone</label>
             <input
               type="tel"
               value={profileData.phone}
               onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
               placeholder="+1 (555) 123-4567"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Title
-            </label>
+            <label className="block text-sm text-gray-800 mb-2 font-semibold">Job Title</label>
             <input
               type="text"
               value={profileData.jobTitle}
               onChange={(e) => setProfileData({...profileData, jobTitle: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
               placeholder="Marketing Director"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Company
-          </label>
+          <label className="block text-sm text-gray-800 mb-2 font-semibold">Company</label>
           <input
             type="text"
             value={profileData.company}
             onChange={(e) => setProfileData({...profileData, company: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
             placeholder="Tech Solutions Inc."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Bio
-          </label>
+          <label className="block text-sm text-gray-800 mb-2 font-semibold">Bio</label>
           <textarea
             rows={3}
             value={profileData.bio}
             onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium resize-none bg-white/80"
             placeholder="Brief description about yourself..."
           />
         </div>
 
         <div className="space-y-4">
-          <h3 className="font-medium text-gray-900">Social Links</h3>
+          <h3 className="text-gray-900 font-semibold">Links</h3>
           
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-3">
             <input
               type="url"
               value={profileData.website}
               onChange={(e) => setProfileData({...profileData, website: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
               placeholder="Website URL"
             />
             
@@ -292,36 +236,34 @@ export default function ActivatePage() {
               type="url"
               value={profileData.linkedin}
               onChange={(e) => setProfileData({...profileData, linkedin: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent font-medium bg-white/80"
               placeholder="LinkedIn URL"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-4">
-            Choose Template
-          </label>
-          <div className="grid md:grid-cols-3 gap-4">
+          <label className="block text-sm text-gray-800 mb-4 font-semibold">Template</label>
+          <div className="grid grid-cols-3 gap-3">
             {templates.map((template) => (
               <div
                 key={template.id}
                 onClick={() => setProfileData({...profileData, template: template.id})}
-                className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                className={`p-4 border rounded-lg cursor-pointer transition-all bg-white/60 backdrop-blur-sm ${
                   profileData.template === template.id
-                    ? 'border-accent bg-accent/5'
-                    : 'border-gray-200 hover:border-accent/50'
+                    ? 'border-gray-900 bg-white/90 shadow-md'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-white/80'
                 }`}
               >
-                <h4 className="font-medium text-gray-900 mb-1">{template.name}</h4>
-                <p className="text-sm text-gray-600">{template.description}</p>
+                <h4 className="font-semibold text-gray-900 mb-1 text-sm">{template.name}</h4>
+                <p className="text-xs text-gray-600 font-medium">{template.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg font-medium">
             {error}
           </div>
         )}
@@ -330,90 +272,96 @@ export default function ActivatePage() {
           <button
             type="button"
             onClick={() => setStep(1)}
-            className="flex-1 btn-secondary"
+            className="flex-1 border border-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-semibold bg-white/60"
           >
             Back
           </button>
           <button
-            type="submit"
+            type="button"
+            onClick={handleProfileCreation}
             disabled={loading}
-            className="flex-1 btn-primary disabled:opacity-50"
+            className="flex-1 bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 font-semibold shadow-lg"
           >
             {loading ? 'Creating Profile...' : 'Complete Setup'}
           </button>
         </div>
-      </form>
+      </div>
     </motion.div>
   )
 
-  const renderStep3 = () => (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="text-center space-y-6"
-    >
-      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+  const renderStep3 = () => {
+    const fullName = `${profileData.firstName} ${profileData.lastName}`.trim()
+    const profileUrl = fullName.toLowerCase().replace(/[^a-z0-9]/g, '')
+    
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center space-y-8"
+      >
+        <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto">
+          <Check className="w-8 h-8 text-white" />
         </div>
-      </div>
 
-      <div>
-        <h2 className="text-3xl font-bold text-primary mb-4">🎉 Card Activated!</h2>
-        <p className="text-xl text-gray-600 mb-6">
-          Your smart contact card is now ready to share
-        </p>
-      </div>
+        <div>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-4">Card Activated</h1>
+          <p className="text-gray-600 font-medium mb-8">
+            Your smart contact card is ready to share
+          </p>
+        </div>
 
-      <div className="bg-accent/5 border border-accent/20 rounded-xl p-6">
-        <h3 className="font-semibold text-accent mb-2">Your Profile URL</h3>
-        <p className="text-sm text-gray-600 break-all">
-          1necard.com/{profileData.fullName.toLowerCase().replace(/[^a-z0-9]/g, '')}
-        </p>
-      </div>
+        <div className="bg-white/95 border border-gray-100/80 rounded-lg p-6 backdrop-blur-sm shadow-lg">
+          <h3 className="font-semibold text-gray-900 mb-2">Your Profile</h3>
+          <p className="text-sm text-gray-700 font-medium break-all">
+            1necard.com/{profileUrl}
+          </p>
+        </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="flex-1 btn-primary"
-        >
-          <Eye className="w-5 h-5 mr-2" />
-          Go to Dashboard
-        </button>
-        <button
-          onClick={() => router.push(`/profile/${profileData.fullName.toLowerCase().replace(/[^a-z0-9]/g, '')}`)}
-          className="flex-1 btn-secondary"
-        >
-          <Eye className="w-5 h-5 mr-2" />
-          Preview Profile
-        </button>
-      </div>
-    </motion.div>
-  )
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={() => console.log('Go to dashboard')}
+            className="flex-1 bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-semibold flex items-center justify-center shadow-lg"
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            Dashboard
+          </button>
+          <button
+            onClick={() => console.log('Preview profile')}
+            className="flex-1 border border-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-semibold flex items-center justify-center bg-white/60"
+          >
+            <Eye className="w-4 h-4 mr-2" />
+            Preview
+          </button>
+        </div>
+      </motion.div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary via-white to-accent/5 flex items-center justify-center section-padding">
-      <div className="max-w-md w-full">
-        <div className="card p-8">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50/30 to-white flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      {/* Shiny white overlay effect */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/80 via-transparent to-white/60 pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/40 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gray-100/30 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="max-w-md w-full relative z-10">
+        <div className="bg-white/95 backdrop-blur-md border border-white/80 rounded-2xl p-8 shadow-2xl ring-1 ring-gray-100/50">
           {/* Progress Indicator */}
-          <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center justify-center mb-12">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-light ${
                     step >= i
-                      ? 'bg-accent text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-400'
                   }`}
                 >
-                  {i}
+                  {step > i ? <Check className="w-4 h-4" /> : i}
                 </div>
                 {i < 3 && (
                   <div
-                    className={`w-12 h-1 mx-2 rounded ${
-                      step > i ? 'bg-accent' : 'bg-gray-200'
+                    className={`w-8 h-0.5 mx-3 rounded ${
+                      step > i ? 'bg-gray-900' : 'bg-gray-200'
                     }`}
                   />
                 )}

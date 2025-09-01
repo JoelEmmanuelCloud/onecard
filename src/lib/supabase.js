@@ -299,6 +299,8 @@ export const getExpiringSubscriptions = async (daysAhead = 7) => {
       *,
       profiles (
         user_id,
+        first_name,
+        last_name,
         full_name,
         email
       )
@@ -501,7 +503,40 @@ export const getUserTeams = async (userId) => {
 
 // ============= UTILITY FUNCTIONS =============
 
-export const generateUsername = async (fullName) => {
+export const generateUsername = async (firstName, lastName) => {
+  // Create full name and base username
+  const fullName = `${firstName} ${lastName}`.trim()
+  let baseUsername = fullName
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .substring(0, 20)
+
+  // If the generated username is too short, try different combinations
+  if (baseUsername.length < 3) {
+    baseUsername = `${firstName}${lastName}`.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 20)
+  }
+
+  let username = baseUsername
+  let counter = 1
+
+  while (true) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('username', username)
+      .single()
+
+    if (!data) break
+
+    username = `${baseUsername}${counter}`
+    counter++
+  }
+
+  return username
+}
+
+// Alternative helper function that takes full name (for backward compatibility)
+export const generateUsernameFromFullName = async (fullName) => {
   let baseUsername = fullName
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '')
@@ -534,6 +569,43 @@ export const isUsernameAvailable = async (username) => {
     .single()
 
   return !data && error?.code === 'PGRST116'
+}
+
+// Helper function to get full name display
+export const getDisplayName = (profile, format = 'full') => {
+  if (!profile) return ''
+  
+  const { first_name, last_name, full_name } = profile
+  
+  switch (format) {
+    case 'first':
+      return first_name || ''
+    case 'last':
+      return last_name || ''
+    case 'firstLast':
+      return `${first_name || ''} ${last_name || ''}`.trim()
+    case 'lastFirst':
+      return `${last_name || ''}, ${first_name || ''}`.trim()
+    case 'initials':
+      return `${first_name?.[0] || ''}${last_name?.[0] || ''}`.toUpperCase()
+    case 'firstInitial':
+      return `${first_name || ''} ${last_name?.[0] || ''}`.trim()
+    default:
+      return full_name || `${first_name || ''} ${last_name || ''}`.trim()
+  }
+}
+
+// Helper function to create profile data with proper name handling
+export const createProfileData = (userData) => {
+  const { firstName, lastName, ...otherData } = userData
+  const fullName = `${firstName || ''} ${lastName || ''}`.trim()
+  
+  return {
+    first_name: firstName || '',
+    last_name: lastName || '',
+    full_name: fullName,
+    ...otherData
+  }
 }
 
 // Export default client for direct use
