@@ -2,9 +2,34 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Check, Eye, ArrowRight } from 'lucide-react'
+import { User, Check, Eye, ArrowRight, ArrowLeft } from 'lucide-react'
 
-export default function MobileOptimizedActivatePage() {
+// Minimal Auth Header Component
+function AuthHeader() {
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/10 shadow-sm">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <a href="/" className="text-2xl font-semibold tracking-wide text-black">
+            1necard
+          </a>
+
+          {/* Back to Home Link */}
+          <a
+            href="/"
+            className="flex items-center space-x-2 text-black/80 hover:text-black transition-colors duration-200 font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Home</span>
+          </a>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+export default function activatePage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -338,38 +363,41 @@ export default function MobileOptimizedActivatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-start sm:items-center justify-center px-4 py-6 sm:py-12">
-      <div className="max-w-md w-full">
-        <div className="bg-white border-2 border-black rounded-2xl p-6 sm:p-8">
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-center mb-8 sm:mb-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center">
-                <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step >= i
-                      ? 'bg-black text-white'
-                      : 'bg-white border-2 border-black text-black'
-                  }`}
-                >
-                  {step > i ? <Check className="w-4 h-4" /> : i}
-                </div>
-                {i < 3 && (
+    <>
+      <AuthHeader />
+      <div className="min-h-screen bg-white flex items-start sm:items-center justify-center px-4 py-24 sm:py-12">
+        <div className="max-w-md w-full">
+          <div className="bg-white border-2 border-black rounded-2xl p-6 sm:p-8">
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center mb-8 sm:mb-12">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center">
                   <div
-                    className={`w-6 sm:w-8 h-0.5 mx-2 sm:mx-3 rounded ${
-                      step > i ? 'bg-black' : 'bg-gray-300'
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                      step >= i
+                        ? 'bg-black text-white'
+                        : 'bg-white border-2 border-black text-black'
                     }`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+                  >
+                    {step > i ? <Check className="w-4 h-4" /> : i}
+                  </div>
+                  {i < 3 && (
+                    <div
+                      className={`w-6 sm:w-8 h-0.5 mx-2 sm:mx-3 rounded ${
+                        step > i ? 'bg-black' : 'bg-gray-300'
+                      }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
 
-          {step === 1 && renderStep1()}
-          {step === 2 && renderStep2()}
-          {step === 3 && renderStep3()}
+            {step === 1 && renderStep1()}
+            {step === 2 && renderStep2()}
+            {step === 3 && renderStep3()}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
