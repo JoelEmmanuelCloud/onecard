@@ -75,7 +75,7 @@ export default function MinimalHero() {
               <motion.button 
                 whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gray-900 text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-all duration-200 font-light flex items-center justify-center"
+                className="bg-gradient-to-r from-gray-900 to-gray-800 text-white px-8 py-3 rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-200 font-light flex items-center justify-center shadow-lg"
               >
                 Get Your Card
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -84,7 +84,7 @@ export default function MinimalHero() {
               <motion.button 
                 whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
-                className="border border-gray-300 text-gray-700 px-8 py-3 rounded-full hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 font-light"
+                className="border border-blue-200 text-gray-700 px-8 py-3 rounded-full hover:border-blue-300 hover:bg-blue-50/50 transition-all duration-200 font-light shadow-sm"
               >
                 Learn More
               </motion.button>
@@ -98,11 +98,11 @@ export default function MinimalHero() {
               className="flex items-center justify-center lg:justify-start space-x-8 text-sm text-gray-500"
             >
               <span className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
                 NFC Enabled
               </span>
               <span className="flex items-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
                 Instant Updates
               </span>
             </motion.div>
@@ -121,9 +121,10 @@ export default function MinimalHero() {
               <motion.div
                 variants={phoneVariants}
                 animate={isCardTouched ? "touched" : "initial"}
-                className="relative z-20 w-48 h-96 sm:w-56 sm:h-[450px] lg:w-64 lg:h-[520px] bg-gray-900 rounded-3xl p-2 shadow-xl mx-auto border border-gray-200"
+                className="relative z-20 w-48 h-96 sm:w-56 sm:h-[450px] lg:w-64 lg:h-[520px] bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-2 shadow-2xl mx-auto border border-gray-700"
               >
-                <div className="w-full h-full bg-white rounded-2xl overflow-hidden relative">
+                <div className="w-full h-full bg-white rounded-2xl overflow-hidden relative border border-gray-100"
+                >
                   
                   <AnimatePresence mode="wait">
                     {!showContactInfo ? (
@@ -169,33 +170,33 @@ export default function MinimalHero() {
                       >
                         {/* Profile */}
                         <div className="text-center mb-8 pt-8">
-                          <div className="w-20 h-20 bg-gray-900 rounded-full mx-auto mb-4 flex items-center justify-center">
+                          <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
                             <span className="text-white font-light text-lg">JS</span>
                           </div>
                           <h3 className="text-xl font-light text-gray-900 mb-1">James Smith</h3>
                           <p className="text-gray-600 text-sm">Product Designer</p>
-                          <p className="text-gray-500 text-xs">TechCorp</p>
+                          <p className="text-blue-600 text-xs font-medium">TechCorp</p>
                         </div>
                         
                         {/* Contact Actions */}
                         <div className="space-y-3 mb-6">
                           {[
-                            { icon: Phone, label: 'Call' },
-                            { icon: Mail, label: 'Email' },
-                            { icon: Globe, label: 'Website' }
+                            { icon: Phone, label: 'Call', color: 'bg-emerald-50 border-emerald-100 hover:bg-emerald-100' },
+                            { icon: Mail, label: 'Email', color: 'bg-blue-50 border-blue-100 hover:bg-blue-100' },
+                            { icon: Globe, label: 'Website', color: 'bg-purple-50 border-purple-100 hover:bg-purple-100' }
                           ].map((item, index) => (
                             <div
                               key={item.label}
-                              className="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-100"
+                              className={`flex items-center p-3 ${item.color} rounded-xl border transition-colors duration-200`}
                             >
-                              <item.icon className="w-5 h-5 text-gray-600 mr-3" />
+                              <item.icon className="w-5 h-5 text-gray-700 mr-3" />
                               <span className="text-gray-700 font-light">{item.label}</span>
                             </div>
                           ))}
                         </div>
 
                         {/* Save Button */}
-                        <button className="w-full bg-gray-900 text-white py-3 rounded-xl font-light">
+                        <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-light hover:from-gray-800 hover:to-gray-700 transition-all duration-200 shadow-lg">
                           Save Contact
                         </button>
                       </motion.div>
@@ -213,9 +214,9 @@ export default function MinimalHero() {
                       className="absolute -top-8 left-1/2 transform -translate-x-1/2"
                     >
                       <motion.div
-                        animate={{ scale: [1, 2.5], opacity: [0.6, 0] }}
+                        animate={{ scale: [1, 2.5], opacity: [0.8, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
-                        className="w-8 h-8 border-2 border-gray-400 rounded-full"
+                        className="w-8 h-8 border-2 border-blue-400 rounded-full"
                       />
                     </motion.div>
                   )}
@@ -228,18 +229,18 @@ export default function MinimalHero() {
                 animate={isCardTouched ? "touching" : "initial"}
                 className="absolute top-16 -left-8 z-30"
               >
-                <div className="w-32 h-20 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div className="w-32 h-20 bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                   <div className="p-4 h-full flex flex-col justify-between">
                     <div>
-                      <div className="text-xs font-light text-gray-600 mb-2">1NECARD</div>
+                      <div className="text-xs font-medium text-blue-600 mb-2">1NECARD</div>
                       <div className="space-y-1">
-                        <div className="w-8 h-0.5 bg-gray-300 rounded"></div>
-                        <div className="w-6 h-0.5 bg-gray-200 rounded"></div>
+                        <div className="w-8 h-0.5 bg-gray-400 rounded"></div>
+                        <div className="w-6 h-0.5 bg-gray-300 rounded"></div>
                       </div>
                     </div>
                     
                     {/* NFC Chip */}
-                    <div className="absolute bottom-3 right-3 w-4 h-4 border border-gray-400 rounded-full flex items-center justify-center">
+                    <div className="absolute bottom-3 right-3 w-4 h-4 border border-blue-400 rounded-full flex items-center justify-center bg-blue-50">
                       <motion.div 
                         animate={isCardTouched ? {
                           scale: [1, 1.2, 1],
@@ -249,7 +250,7 @@ export default function MinimalHero() {
                           duration: 0.8,
                           repeat: isCardTouched ? Infinity : 0
                         }}
-                        className="w-2 h-2 bg-gray-400 rounded-full"
+                        className="w-2 h-2 bg-blue-500 rounded-full"
                       />
                     </div>
                   </div>

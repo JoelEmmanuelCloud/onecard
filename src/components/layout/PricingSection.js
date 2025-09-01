@@ -6,130 +6,105 @@ import { Check, Zap, Crown, Building2 } from 'lucide-react'
 
 const plans = [
   {
-    name: 'Basic Card',
+    name: 'Basic',
     icon: Zap,
-    price: 25,
-    description: 'Perfect for individuals getting started',
+    price: 40000,
+    description: 'Perfect for individuals',
     features: [
-      'Physical NFC smart card',
+      'Physical NFC card',
       'QR code backup',
       'Digital profile page',
-      'Basic templates (3 designs)',
-      'Unlimited profile updates',
-      'Contact export (VCF)',
+      'Basic templates',
+      'Unlimited updates',
+      'Contact export',
       'Basic analytics',
-      '24/7 support'
+      'Email support'
     ],
     popular: false,
-    buttonText: 'Get Basic Card',
-    color: 'from-blue-500 to-blue-600'
+    buttonText: 'Get Basic'
   },
   {
-    name: 'Premium Card',
+    name: 'Premium',
     icon: Crown,
-    price: 45,
-    monthly: 5,
-    description: 'Enhanced features for professionals',
+    price: 75000,
+    monthly: 8000,
+    description: 'Enhanced for professionals',
     features: [
       'Everything in Basic',
-      'Premium templates (10+ designs)',
-      'Custom branding & colors',
+      'Premium templates',
+      'Custom branding',
       'Advanced analytics',
-      'Social media integration',
-      'Appointment booking links',
-      'Lead capture forms',
+      'Social integrations',
+      'Booking links',
+      'Lead capture',
       'Priority support'
     ],
     popular: true,
-    buttonText: 'Get Premium Card',
-    color: 'from-purple-500 to-purple-600'
+    buttonText: 'Get Premium'
   },
   {
     name: 'Enterprise',
     icon: Building2,
     price: 'Custom',
-    description: 'Scalable solution for teams',
+    description: 'Scalable for teams',
     features: [
       'Everything in Premium',
-      'Bulk card ordering',
-      'Team management dashboard',
-      'Custom domain & branding',
+      'Bulk ordering',
+      'Team dashboard',
+      'Custom domain',
       'API integration',
-      'Advanced security features',
-      'Dedicated account manager',
-      'Custom integrations'
+      'Advanced security',
+      'Account manager',
+      'Custom features'
     ],
     popular: false,
-    buttonText: 'Contact Sales',
-    color: 'from-gray-700 to-gray-800'
+    buttonText: 'Contact Sales'
   }
 ]
 
-export default function PricingSection() {
+export default function MinimalPricing() {
   const [billingCycle, setBillingCycle] = useState('annual')
 
   const handlePurchase = (plan) => {
-    // In a real app, this would integrate with Paystack
     console.log(`Purchasing ${plan.name}`)
-    
-    // Example Paystack integration
-    if (typeof window !== 'undefined' && window.PaystackPop) {
-      const handler = window.PaystackPop.setup({
-        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-        email: 'customer@email.com', // Get from user
-        amount: plan.price === 'Custom' ? 0 : plan.price * 100, // Amount in kobo
-        currency: 'NGN',
-        ref: `1necard_${Date.now()}`,
-        callback: function(response) {
-          // Handle successful payment
-          console.log('Payment successful:', response.reference)
-          // Redirect to activation or success page
-        },
-        onClose: function() {
-          console.log('Payment cancelled')
-        }
-      })
-      handler.openIframe()
-    }
   }
 
   return (
-    <section id="pricing" className="py-24 bg-gray-50">
-      <div className="container-max section-padding">
+    <section id="pricing" className="py-16 sm:py-20 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-primary mb-6">
-            Choose Your
-            <span className="text-gradient"> Smart Card</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-3 sm:mb-4">
+            Simple pricing
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Get your professional smart contact card and start networking like never before.
-            One-time card purchase with optional premium features.
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto font-light mb-6 sm:mb-8">
+            Choose the plan that fits your networking needs. One-time card purchase with optional premium features.
           </p>
           
           {/* Billing Toggle */}
-          <div className="flex items-center justify-center space-x-4 bg-white rounded-full p-1 w-fit mx-auto shadow-sm">
+          <div className="flex items-center justify-center space-x-1 bg-white rounded-full p-1 w-fit mx-auto border border-gray-200">
             <button
               onClick={() => setBillingCycle('annual')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+              className={`px-3 sm:px-4 py-2 rounded-full text-sm font-light transition-all duration-200 ${
                 billingCycle === 'annual'
-                  ? 'bg-accent text-white shadow-md'
-                  : 'text-gray-600 hover:text-primary'
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Annual
             </button>
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
+              className={`px-3 sm:px-4 py-2 rounded-full text-sm font-light transition-all duration-200 ${
                 billingCycle === 'monthly'
-                  ? 'bg-accent text-white shadow-md'
-                  : 'text-gray-600 hover:text-primary'
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Monthly
@@ -137,53 +112,65 @@ export default function PricingSection() {
           </div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {plans.map((plan, index) => {
             const IconComponent = plan.icon
+            const cardStyles = {
+              0: 'border-blue-200 bg-gradient-to-br from-white to-blue-50/30 hover:border-blue-300',
+              1: 'border-purple-200 bg-gradient-to-br from-white to-purple-50/30 hover:border-purple-300 shadow-lg md:scale-105',
+              2: 'border-slate-200 bg-gradient-to-br from-white to-slate-50/30 hover:border-slate-300'
+            }
+            const iconStyles = {
+              0: 'bg-blue-50 text-blue-600',
+              1: 'bg-purple-50 text-purple-600', 
+              2: 'bg-slate-50 text-slate-600'
+            }
+            const buttonStyles = {
+              0: 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-sm',
+              1: 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md',
+              2: 'border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50'
+            }
+            
             return (
               <motion.div
                 key={plan.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className={`relative bg-white rounded-2xl shadow-lg border-2 overflow-hidden ${
-                  plan.popular 
-                    ? 'border-accent shadow-accent/20 transform scale-105' 
-                    : 'border-gray-100 hover:border-accent/30'
-                } transition-all duration-300 hover:shadow-xl`}
+                className={`relative rounded-2xl border overflow-hidden transition-all duration-200 ${cardStyles[index]}`}
               >
                 {/* Popular Badge */}
                 {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-accent text-white text-center py-2 text-sm font-semibold">
-                    Most Popular
+                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-center py-2 text-xs font-light tracking-wide">
+                    MOST POPULAR
                   </div>
                 )}
 
-                <div className={`p-8 ${plan.popular ? 'pt-16' : ''}`}>
+                <div className={`p-6 sm:p-8 ${plan.popular ? 'pt-12 sm:pt-14' : ''}`}>
                   {/* Plan Header */}
-                  <div className="text-center mb-8">
-                    <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r ${plan.color} flex items-center justify-center`}>
-                      <IconComponent className="w-8 h-8 text-white" />
+                  <div className="text-center mb-6 sm:mb-8">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-2xl ${iconStyles[index]} flex items-center justify-center shadow-sm`}>
+                      <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
-                    <h3 className="text-2xl font-bold text-primary mb-2">{plan.name}</h3>
-                    <p className="text-gray-600 mb-6">{plan.description}</p>
+                    <h3 className="text-lg sm:text-xl font-normal text-gray-900 mb-2">{plan.name}</h3>
+                    <p className="text-gray-600 text-sm font-light mb-4 sm:mb-6">{plan.description}</p>
                     
                     {/* Pricing */}
-                    <div className="mb-6">
+                    <div className="mb-6 sm:mb-8">
                       {plan.price === 'Custom' ? (
-                        <div className="text-4xl font-bold text-primary">Custom</div>
+                        <div className="text-2xl sm:text-3xl font-light text-gray-900">Custom</div>
                       ) : (
                         <div>
                           <div className="flex items-baseline justify-center">
-                            <span className="text-4xl font-bold text-primary">${plan.price}</span>
-                            <span className="text-gray-600 ml-1">USD</span>
+                            <span className="text-2xl sm:text-3xl font-light text-gray-900">₦{plan.price.toLocaleString()}</span>
+                            <span className="text-gray-500 ml-1 text-sm">NGN</span>
                           </div>
-                          <div className="text-sm text-gray-500">One-time card purchase</div>
+                          <div className="text-xs text-gray-500 mt-1">One-time card purchase</div>
                           {plan.monthly && (
-                            <div className="mt-2">
-                              <div className="text-accent font-semibold">
-                                + ${billingCycle === 'annual' ? plan.monthly * 10 : plan.monthly}/{billingCycle === 'annual' ? 'year' : 'month'}
+                            <div className="mt-3 pt-3 border-t border-gray-100">
+                              <div className="text-gray-900 font-light text-sm">
+                                + ₦{billingCycle === 'annual' ? (plan.monthly * 10).toLocaleString() : plan.monthly.toLocaleString()}/{billingCycle === 'annual' ? 'year' : 'month'}
                               </div>
                               <div className="text-xs text-gray-500">for premium features</div>
                             </div>
@@ -194,13 +181,15 @@ export default function PricingSection() {
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                        <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                          <Check className="w-3 h-3 text-green-600" />
+                        <div className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center mr-3 mt-0.5 ${
+                          index === 0 ? 'bg-blue-600' : index === 1 ? 'bg-purple-600' : 'bg-slate-600'
+                        }`}>
+                          <Check className="w-2.5 h-2.5 text-white" />
                         </div>
-                        <span className="text-gray-700">{feature}</span>
+                        <span className="text-gray-700 text-sm font-light leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -208,11 +197,7 @@ export default function PricingSection() {
                   {/* CTA Button */}
                   <button
                     onClick={() => handlePurchase(plan)}
-                    className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${
-                      plan.popular
-                        ? 'bg-accent hover:bg-blue-600 text-white shadow-lg hover:shadow-xl'
-                        : 'bg-gray-100 hover:bg-gray-200 text-primary hover:text-accent'
-                    }`}
+                    className={`w-full py-3 sm:py-3.5 px-6 rounded-full font-light transition-all duration-200 text-sm sm:text-base ${buttonStyles[index]}`}
                   >
                     {plan.buttonText}
                   </button>
@@ -226,49 +211,49 @@ export default function PricingSection() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-12 sm:mt-16"
         >
-          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-8 items-center">
-              <div>
-                <div className="text-2xl font-bold text-primary">30-Day</div>
-                <div className="text-sm text-gray-600">Money Back Guarantee</div>
+          <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl p-6 sm:p-8 border border-emerald-100 shadow-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
+              <div className="group">
+                <div className="text-lg sm:text-xl font-light text-emerald-700 group-hover:text-emerald-800 transition-colors">30-Day</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-light">Money Back Guarantee</div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">Free</div>
-                <div className="text-sm text-gray-600">Worldwide Shipping</div>
+              <div className="group">
+                <div className="text-lg sm:text-xl font-light text-emerald-700 group-hover:text-emerald-800 transition-colors">Free</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-light">Worldwide Shipping</div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">24/7</div>
-                <div className="text-sm text-gray-600">Customer Support</div>
+              <div className="group">
+                <div className="text-lg sm:text-xl font-light text-emerald-700 group-hover:text-emerald-800 transition-colors">24/7</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-light">Customer Support</div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">100%</div>
-                <div className="text-sm text-gray-600">Secure Payments</div>
+              <div className="group">
+                <div className="text-lg sm:text-xl font-light text-emerald-700 group-hover:text-emerald-800 transition-colors">100%</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-light">Secure Payments</div>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* FAQ Teaser */}
+        {/* Simple FAQ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-12 sm:mt-16"
         >
-          <h3 className="text-2xl font-bold text-primary mb-4">Have Questions?</h3>
-          <p className="text-gray-600 mb-6">
-            Check out our FAQ or get in touch with our support team
+          <h3 className="text-lg sm:text-xl font-light text-gray-900 mb-2 sm:mb-3">Questions?</h3>
+          <p className="text-gray-600 mb-4 sm:mb-6 font-light text-sm sm:text-base">
+            Get in touch with our support team
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="btn-secondary">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-sm mx-auto sm:max-w-none">
+            <button className="border border-gray-300 text-gray-700 px-6 py-2.5 sm:py-2 rounded-full hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 font-light text-sm sm:text-base shadow-sm">
               View FAQ
             </button>
-            <button className="btn-primary">
+            <button className="bg-gradient-to-r from-gray-900 to-gray-800 text-white px-6 py-2.5 sm:py-2 rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-200 font-light text-sm sm:text-base shadow-sm">
               Contact Support
             </button>
           </div>

@@ -7,83 +7,86 @@ const features = [
   {
     icon: Smartphone,
     title: 'NFC Technology',
-    description: 'Simply tap your card against any smartphone to instantly share your contact information.',
-    color: 'from-blue-500 to-blue-600'
+    description: 'Simply tap your card against any smartphone to instantly share your contact information.'
   },
   {
     icon: QrCode,
     title: 'QR Code Backup',
-    description: 'Every card includes a QR code for devices without NFC capability. Universal compatibility.',
-    color: 'from-purple-500 to-purple-600'
+    description: 'Every card includes a QR code for devices without NFC capability. Universal compatibility.'
   },
   {
     icon: RefreshCw,
     title: 'Instant Updates',
-    description: 'Update your information anytime. Changes reflect immediately on your digital profile.',
-    color: 'from-green-500 to-green-600'
+    description: 'Update your information anytime. Changes reflect immediately on your digital profile.'
   },
   {
     icon: Palette,
-    title: 'Custom Templates',
-    description: 'Choose from professional templates or create your own unique design and branding.',
-    color: 'from-orange-500 to-orange-600'
+    title: 'Custom Design',
+    description: 'Choose from clean templates or create your own professional design.'
   },
   {
     icon: Shield,
     title: 'Privacy Control',
-    description: 'Control what information you share and with whom. Your data, your rules.',
-    color: 'from-red-500 to-red-600'
+    description: 'Control what information you share and with whom. Your data, your rules.'
   },
   {
     icon: Zap,
     title: 'Lightning Fast',
-    description: 'Share contacts in under 2 seconds. No apps required for recipients.',
-    color: 'from-yellow-500 to-yellow-600'
+    description: 'Share contacts in under 2 seconds. No apps required for recipients.'
   }
 ]
 
-export default function FeaturesSection() {
+export default function MinimalFeatures() {
   return (
-    <section id="features" className="py-24 bg-white">
-      <div className="container-max section-padding">
+    <section id="features" className="py-16 sm:py-20 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold text-primary mb-6">
-            Why Choose
-            <span className="text-gradient"> 1necard?</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 mb-3 sm:mb-4">
+            Everything you need
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience the future of networking with our smart contact cards. 
-            Professional, convenient, and environmentally friendly.
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto font-light">
+            Professional networking made simple with smart technology
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
           {features.map((feature, index) => {
             const IconComponent = feature.icon
+            const colors = [
+              'bg-blue-50 text-blue-600 group-hover:bg-blue-600',
+              'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600', 
+              'bg-amber-50 text-amber-600 group-hover:bg-amber-600',
+              'bg-purple-50 text-purple-600 group-hover:bg-purple-600',
+              'bg-rose-50 text-rose-600 group-hover:bg-rose-600',
+              'bg-slate-50 text-slate-600 group-hover:bg-slate-600'
+            ]
+            const colorClass = colors[index % colors.length]
+            
             return (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="card p-8 text-center hover:-translate-y-2 group"
+                className="text-center group hover:scale-105 transition-transform duration-200"
               >
-                <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="w-8 h-8 text-white" />
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-4 sm:mb-6 rounded-xl ${colorClass} flex items-center justify-center group-hover:text-white transition-all duration-200 shadow-sm`}>
+                  <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 transition-colors duration-200" />
                 </div>
                 
-                <h3 className="text-xl font-bold text-primary mb-4">
+                <h3 className="text-base sm:text-lg font-normal text-gray-900 mb-2 sm:mb-3">
                   {feature.title}
                 </h3>
                 
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed font-light text-sm sm:text-base">
                   {feature.description}
                 </p>
               </motion.div>
@@ -91,49 +94,31 @@ export default function FeaturesSection() {
           })}
         </div>
 
-        {/* Demo Section */}
+        {/* Simple Demo Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mt-24 text-center"
+          className="mt-16 sm:mt-20 text-center"
         >
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12">
-            <h3 className="text-3xl font-bold text-primary mb-6">
-              See It In Action
+          <div className="max-w-sm mx-auto">
+            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-3 sm:mb-4">
+              See it in action
             </h3>
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Watch how easy it is to share your professional information with just one tap. 
-              No apps, no typing, no hassle.
+            <p className="text-gray-600 mb-6 sm:mb-8 font-light text-sm sm:text-base">
+              Experience how simple professional networking can be
             </p>
             
-            <div className="relative max-w-md mx-auto">
-              {/* Interactive Demo Placeholder */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-dashed border-gray-300">
-                <div className="text-6xl mb-4">📱</div>
-                <h4 className="font-bold text-lg text-primary mb-2">Interactive Demo</h4>
-                <p className="text-gray-600 mb-4">Experience a live preview of your digital profile</p>
-                <button className="bg-accent text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                  Try Demo
-                </button>
+            <div className="bg-gray-50 rounded-2xl p-6 sm:p-8 border border-gray-100">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <Smartphone className="w-7 h-7 sm:w-8 sm:h-8 text-gray-600" />
               </div>
-              
-              {/* Animated Tap Indicator */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute -top-4 -right-4 w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center"
-              >
-                <div className="w-6 h-6 bg-accent rounded-full"></div>
-              </motion.div>
+              <h4 className="font-normal text-gray-900 mb-2 text-sm sm:text-base">Interactive Preview</h4>
+              <p className="text-gray-600 mb-4 sm:mb-6 text-xs sm:text-sm font-light">Try a live demo of your digital profile</p>
+              <button className="bg-gray-900 text-white px-6 py-2.5 sm:py-3 rounded-full hover:bg-gray-800 transition-colors duration-200 font-light text-sm sm:text-base w-full sm:w-auto">
+                Try Demo
+              </button>
             </div>
           </div>
         </motion.div>
