@@ -165,7 +165,7 @@ export default function OptimizedMinimalFooter() {
                       <li key={link.name}>
                         <a 
                           href={link.href}
-                          className="text-white/70 hover:text-white transition-colors duration-200 text-xs sm:text-sm lg:text-base block py-1 hover:translate-x-1 transition-transform duration-200"
+                          className="text-white/70 hover:text-white transition-colors duration-200 text-xs sm:text-sm lg:text-base block py-1 hover:translate-x-1"
                         >
                           {link.name}
                         </a>
