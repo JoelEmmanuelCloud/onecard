@@ -2,8 +2,18 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Chrome, Apple, Github, Loader } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+
+// Logo component for official brand logos
+const BrandLogo = ({ src, alt, className = "w-4 h-4 sm:w-5 sm:h-5" }) => (
+  <img 
+    src={src} 
+    alt={alt} 
+    className={className}
+    style={{ filter: 'none' }}
+  />
+)
 
 export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboard' }) {
   const [loading, setLoading] = useState({
@@ -44,21 +54,21 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
     {
       name: 'google',
       label: 'Continue with Google',
-      icon: Chrome,
+      logoUrl: 'https://cdn.simpleicons.org/google/white',
       color: 'bg-red-500 hover:bg-red-600 focus:ring-red-500',
       textColor: 'text-white'
     },
     {
       name: 'apple',
       label: 'Continue with Apple',
-      icon: Apple,
+      logoUrl: 'https://cdn.simpleicons.org/apple/white',
       color: 'bg-black hover:bg-gray-800 focus:ring-gray-800',
       textColor: 'text-white'
     },
     {
       name: 'github',
       label: 'Continue with GitHub',
-      icon: Github,
+      logoUrl: 'https://cdn.simpleicons.org/github/white',
       color: 'bg-gray-800 hover:bg-gray-900 focus:ring-gray-800',
       textColor: 'text-white'
     }
@@ -67,7 +77,6 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
   return (
     <div className="space-y-2 sm:space-y-3">
       {socialProviders.map((provider, index) => {
-        const IconComponent = provider.icon
         const isLoading = loading[provider.name]
         const isAnyLoading = Object.values(loading).some(Boolean)
         
@@ -84,7 +93,11 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
             {isLoading ? (
               <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2 sm:mr-3" />
             ) : (
-              <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+              <BrandLogo 
+                src={provider.logoUrl} 
+                alt={`${provider.name} logo`}
+                className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" 
+              />
             )}
             <span className="truncate">
               {isLoading ? 'Connecting...' : provider.label}
@@ -109,7 +122,7 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
 export function SocialLoginButton({ 
   provider, 
   label, 
-  icon: Icon, 
+  logoUrl,
   className = '',
   onSuccess,
   onError 
@@ -147,7 +160,11 @@ export function SocialLoginButton({
       {loading ? (
         <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2" />
       ) : (
-        <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+        <BrandLogo 
+          src={logoUrl} 
+          alt={`${provider} logo`}
+          className="w-4 h-4 sm:w-5 sm:h-5 mr-2" 
+        />
       )}
       <span className="truncate">
         {loading ? 'Connecting...' : label}
@@ -200,9 +217,21 @@ export function SocialAccountLinking({ userId }) {
   }
 
   const socialProviders = [
-    { name: 'google', label: 'Google', icon: Chrome },
-    { name: 'apple', label: 'Apple', icon: Apple },
-    { name: 'github', label: 'GitHub', icon: Github }
+    { 
+      name: 'google', 
+      label: 'Google', 
+      logoUrl: 'https://cdn.simpleicons.org/google'
+    },
+    { 
+      name: 'apple', 
+      label: 'Apple', 
+      logoUrl: 'https://cdn.simpleicons.org/apple'
+    },
+    { 
+      name: 'github', 
+      label: 'GitHub', 
+      logoUrl: 'https://cdn.simpleicons.org/github'
+    }
   ]
 
   return (
@@ -212,7 +241,6 @@ export function SocialAccountLinking({ userId }) {
       
       <div className="space-y-3 sm:space-y-4">
         {socialProviders.map((provider) => {
-          const IconComponent = provider.icon
           const isLinked = linkedAccounts[provider.name]
           const isLoading = loading[provider.name]
           
@@ -222,7 +250,11 @@ export function SocialAccountLinking({ userId }) {
               className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors duration-200"
             >
               <div className="flex items-center min-w-0 flex-1">
-                <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 mr-3 text-gray-600 flex-shrink-0" />
+                <BrandLogo 
+                  src={provider.logoUrl} 
+                  alt={`${provider.name} logo`}
+                  className="w-5 h-5 sm:w-6 sm:h-6 mr-3 flex-shrink-0" 
+                />
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{provider.label}</p>
                   <p className="text-xs sm:text-sm text-gray-500">
