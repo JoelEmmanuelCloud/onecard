@@ -99,68 +99,74 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const createUserProfile = async (user) => {
+// Update the createUserProfile function in your AuthProvider.jsx
+const createUserProfile = async (user) => {
+  try {
+    // Extract name from user metadata or email with better fallbacks
+    const fullName = user.user_metadata?.full_name || 
+                    user.user_metadata?.name || 
+                    user.user_metadata?.display_name || 
+                    ''
+    
+    const firstName = user.user_metadata?.given_name || 
+                     user.user_metadata?.first_name || 
+                     fullName.split(' ')[0] || 
+                     user.email?.split('@')[0] || 
+                     'User'
+    
+    const lastName = user.user_metadata?.family_name || 
+                    user.user_metadata?.last_name || 
+                    fullName.split(' ').slice(1).join(' ') || 
+                    ''
+    
+    // Generate unique username with better error handling
+    let username
     try {
       const { generateUsername } = await import('@/lib/supabase')
-      
-      // Extract name from user metadata or email with better fallbacks
-      const fullName = user.user_metadata?.full_name || 
-                      user.user_metadata?.name || 
-                      user.user_metadata?.display_name || 
-                      ''
-      
-      const firstName = user.user_metadata?.given_name || 
-                       user.user_metadata?.first_name || 
-                       fullName.split(' ')[0] || 
-                       user.email?.split('@')[0] || 
-                       'User'
-      
-      const lastName = user.user_metadata?.family_name || 
-                      user.user_metadata?.last_name || 
-                      fullName.split(' ').slice(1).join(' ') || 
-                      ''
-      
-      // Generate unique username with better error handling
-      let username
-      try {
-        username = await generateUsername(firstName, lastName || Math.random().toString(36).substring(7))
-      } catch (usernameError) {
-        console.error('Error generating username:', usernameError)
-        // Fallback username generation
-        username = `user_${Math.random().toString(36).substring(2, 8)}`
-      }
-
-      const profileData = {
-        user_id: user.id,
-        email: user.email,
-        full_name: fullName || `${firstName} ${lastName}`.trim() || firstName,
-        first_name: firstName,
-        last_name: lastName,
-        username: username,
-        profile_image_url: user.user_metadata?.avatar_url || 
-                          user.user_metadata?.picture || 
-                          null,
-        is_active: true,
-        template_style: 'minimal',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([profileData])
-
-      if (profileError) {
-        console.error('Error creating profile:', profileError)
-        setError('Failed to create user profile')
-      } else {
-        console.log('Profile created successfully for:', user.email)
-      }
-    } catch (error) {
-      console.error('Error creating user profile:', error)
-      setError('Failed to create user profile')
+      username = await generateUsername(firstName, lastName || `user${Date.now()}`)
+    } catch (usernameError) {
+      console.error('Error generating username:', usernameError)
+      // Fallback username generation
+      const timestamp = Date.now().toString().slice(-6)
+      const cleanEmail = user.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || 'user'
+      username = `${cleanEmail}${timestamp}`.toLowerCase().slice(0, 20)
     }
+
+    const profileData = {
+      user_id: user.id,
+      email: user.email,
+      full_name: fullName || `${firstName} ${lastName}`.trim() || firstName,
+      first_name: firstName,
+      last_name: lastName,
+      username: username,
+      profile_image_url: user.user_metadata?.avatar_url || 
+                        user.user_metadata?.picture || 
+                        null,
+      is_active: true,
+      template_style: 'minimal',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
+    console.log('Creating profile with data:', profileData)
+
+    const { data, error: profileError } = await supabase
+      .from('profiles')
+      .insert([profileData])
+      .select()
+      .single()
+
+    if (profileError) {
+      console.error('Error creating profile:', profileError)
+      setError('Failed to create user profile: ' + profileError.message)
+    } else {
+      console.log('Profile created successfully:', data)
+    }
+  } catch (error) {
+    console.error('Error creating user profile:', error)
+    setError('Failed to create user profile: ' + error.message)
   }
+}
 
   const signOut = async () => {
     try {
