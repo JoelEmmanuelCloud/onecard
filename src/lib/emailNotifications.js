@@ -122,7 +122,7 @@ export const sendPaymentSuccessEmail = async (userEmail, paymentData) => {
     user_name: paymentData.name,
     plan_name: paymentData.planName,
     amount: paymentData.amount,
-    currency: paymentData.currency || 'USD',
+    currency: paymentData.currency || 'NGN',
     transaction_id: paymentData.transactionId,
     payment_date: new Date().toLocaleDateString(),
     dashboard_url: paymentData.dashboardUrl,
