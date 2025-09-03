@@ -199,7 +199,7 @@ export const createPaymentRecord = async (paymentData) => {
       user_id: paymentData.userId,
       reference: paymentData.reference,
       amount: paymentData.amount,
-      currency: paymentData.currency || 'USD',
+      currency: paymentData.currency || 'NGN',
       status: paymentData.status || 'pending',
       plan_type: paymentData.planType,
       payment_type: paymentData.paymentType, // 'card' or 'subscription'
