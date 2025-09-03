@@ -10,6 +10,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [session, setSession] = useState(null)
+  const [error, setError] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export function AuthProvider({ children }) {
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
+        setError(null)
 
         if (event === 'SIGNED_IN' && session) {
           await handleSignIn(session.user)
@@ -32,6 +34,15 @@ export function AuthProvider({ children }) {
         if (event === 'SIGNED_OUT') {
           setUser(null)
           setSession(null)
+          setError(null)
+        }
+
+        if (event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully')
+        }
+
+        if (event === 'USER_UPDATED') {
+          console.log('User updated')
         }
       }
     )
@@ -41,11 +52,24 @@ export function AuthProvider({ children }) {
 
   const getInitialSession = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
+      setLoading(true)
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Error getting initial session:', error)
+        setError(error.message)
+      } else {
+        setSession(session)
+        setUser(session?.user ?? null)
+        
+        // If user exists but profile might not, handle it
+        if (session?.user) {
+          await handleSignIn(session.user)
+        }
+      }
     } catch (error) {
       console.error('Error getting initial session:', error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
@@ -62,10 +86,16 @@ export function AuthProvider({ children }) {
 
       if (error && error.code === 'PGRST116') {
         // Profile doesn't exist, create one
+        console.log('Creating profile for new user:', user.email)
         await createUserProfile(user)
+      } else if (error) {
+        console.error('Error checking profile:', error)
+      } else {
+        console.log('Profile exists for user:', user.email)
       }
     } catch (error) {
       console.error('Error handling sign in:', error)
+      setError(error.message)
     }
   }
 
@@ -73,25 +103,47 @@ export function AuthProvider({ children }) {
     try {
       const { generateUsername } = await import('@/lib/supabase')
       
-      // Extract name from user metadata or email
-      const fullName = user.user_metadata?.full_name || user.user_metadata?.name || ''
-      const firstName = user.user_metadata?.given_name || user.user_metadata?.first_name || fullName.split(' ')[0] || ''
-      const lastName = user.user_metadata?.family_name || user.user_metadata?.last_name || fullName.split(' ').slice(1).join(' ') || ''
+      // Extract name from user metadata or email with better fallbacks
+      const fullName = user.user_metadata?.full_name || 
+                      user.user_metadata?.name || 
+                      user.user_metadata?.display_name || 
+                      ''
       
-      // Generate unique username
-      const username = await generateUsername(firstName || 'user', lastName || Math.random().toString(36).substring(7))
+      const firstName = user.user_metadata?.given_name || 
+                       user.user_metadata?.first_name || 
+                       fullName.split(' ')[0] || 
+                       user.email?.split('@')[0] || 
+                       'User'
+      
+      const lastName = user.user_metadata?.family_name || 
+                      user.user_metadata?.last_name || 
+                      fullName.split(' ').slice(1).join(' ') || 
+                      ''
+      
+      // Generate unique username with better error handling
+      let username
+      try {
+        username = await generateUsername(firstName, lastName || Math.random().toString(36).substring(7))
+      } catch (usernameError) {
+        console.error('Error generating username:', usernameError)
+        // Fallback username generation
+        username = `user_${Math.random().toString(36).substring(2, 8)}`
+      }
 
       const profileData = {
         user_id: user.id,
         email: user.email,
-        full_name: fullName || `${firstName} ${lastName}`.trim(),
+        full_name: fullName || `${firstName} ${lastName}`.trim() || firstName,
         first_name: firstName,
         last_name: lastName,
         username: username,
-        profile_image_url: user.user_metadata?.avatar_url || null,
+        profile_image_url: user.user_metadata?.avatar_url || 
+                          user.user_metadata?.picture || 
+                          null,
         is_active: true,
         template_style: 'minimal',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
 
       const { error: profileError } = await supabase
@@ -100,32 +152,75 @@ export function AuthProvider({ children }) {
 
       if (profileError) {
         console.error('Error creating profile:', profileError)
+        setError('Failed to create user profile')
       } else {
         console.log('Profile created successfully for:', user.email)
       }
     } catch (error) {
       console.error('Error creating user profile:', error)
+      setError('Failed to create user profile')
     }
   }
 
   const signOut = async () => {
     try {
       setLoading(true)
-      await supabaseSignOut()
-      router.push('/')
+      setError(null)
+      
+      const { error } = await supabaseSignOut()
+      if (error) {
+        console.error('Error signing out:', error)
+        setError(error.message)
+      } else {
+        // Clear local state
+        setUser(null)
+        setSession(null)
+        // Redirect to home
+        router.push('/')
+      }
     } catch (error) {
       console.error('Error signing out:', error)
+      setError(error.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const refreshSession = async () => {
+    try {
+      setLoading(true)
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      
+      if (error) {
+        console.error('Error refreshing session:', error)
+        setError(error.message)
+      } else {
+        setSession(session)
+        setUser(session?.user ?? null)
+      }
+    } catch (error) {
+      console.error('Error refreshing session:', error)
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const clearError = () => {
+    setError(null)
   }
 
   const value = {
     user,
     session,
     loading,
+    error,
     signOut,
-    isAuthenticated: !!user
+    refreshSession,
+    clearError,
+    isAuthenticated: !!user,
+    isLoading: loading,
+    hasError: !!error
   }
 
   return (
@@ -141,6 +236,45 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
+}
+
+// Additional hook for checking auth state
+export const useAuthState = () => {
+  const { user, loading, isAuthenticated } = useAuth()
+  return {
+    user,
+    loading,
+    isAuthenticated,
+    isAnonymous: !isAuthenticated
+  }
+}
+
+// Hook for protected routes
+export const useRequireAuth = (redirectTo = '/auth') => {
+  const { isAuthenticated, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push(redirectTo)
+    }
+  }, [isAuthenticated, loading, router, redirectTo])
+
+  return { isAuthenticated, loading }
+}
+
+// Hook for guest-only routes (redirect authenticated users)
+export const useRequireGuest = (redirectTo = '/dashboard') => {
+  const { isAuthenticated, loading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.push(redirectTo)
+    }
+  }, [isAuthenticated, loading, router, redirectTo])
+
+  return { isAuthenticated, loading }
 }
 
 export default useAuth

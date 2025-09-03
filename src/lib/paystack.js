@@ -18,22 +18,43 @@ export const initializePaystack = () => {
 export const paymentPlans = {
   basic: {
     name: 'Basic Card',
-    price: 25,
-    currency: 'USD',
-    features: ['Physical NFC card', 'Digital profile', 'Basic templates', 'Contact export']
+    price: 40000, // in kobo (₦400)
+    currency: 'NGN',
+    features: [
+      'Physical NFC card',
+      'Digital profile page', 
+      'Basic templates',
+      'Contact export',
+      'Unlimited updates',
+      'Email support'
+    ]
   },
   premium: {
     name: 'Premium Card',
-    price: 45,
-    currency: 'USD',
-    monthly: 5,
-    features: ['Everything in Basic', 'Premium templates', 'Analytics', 'Custom branding']
+    price: 75000, // in kobo (₦750)
+    currency: 'NGN',
+    monthly: 8000, // ₦80 monthly for premium features
+    features: [
+      'Everything in Basic',
+      'Premium templates',
+      'Custom branding',
+      'Advanced analytics',
+      'Social integrations',
+      'Priority support'
+    ]
   },
   enterprise: {
     name: 'Enterprise',
     price: null, // Custom pricing
-    currency: 'USD',
-    features: ['Everything in Premium', 'Team management', 'API access', 'Custom integrations']
+    currency: 'NGN',
+    features: [
+      'Everything in Premium',
+      'Bulk ordering',
+      'Team dashboard',
+      'Custom domain',
+      'API integration',
+      'Account manager'
+    ]
   }
 }
 

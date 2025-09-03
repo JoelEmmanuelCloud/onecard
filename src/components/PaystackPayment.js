@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Loader, CreditCard, Check, AlertCircle } from 'lucide-react'
+import { Loader, CreditCard, Check, AlertCircle, Star } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { createPaymentRecord } from '@/lib/supabase'
 
@@ -198,7 +198,7 @@ export default function PaystackPayment({
     return (
       <button
         onClick={() => window.open('mailto:sales@1necard.com', '_blank')}
-        className={`w-full py-3 px-6 rounded-full font-medium transition-all duration-200 border-2 border-black text-black hover:bg-black hover:text-white ${buttonClassName}`}
+        className={`w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-full font-medium transition-all duration-200 border-2 border-black text-black hover:bg-black hover:text-white text-sm sm:text-base ${buttonClassName}`}
         disabled={disabled}
       >
         Contact Sales
@@ -210,21 +210,27 @@ export default function PaystackPayment({
     <button
       onClick={handlePayment}
       disabled={loading || disabled}
-      className={`w-full py-3 px-6 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${buttonClassName}`}
+      className={`w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-full font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base ${buttonClassName}`}
     >
       {loading ? (
         <div className="flex items-center justify-center">
           <Loader className="w-4 h-4 animate-spin mr-2" />
-          Processing...
+          <span className="hidden sm:inline">Processing...</span>
+          <span className="sm:hidden">Wait...</span>
         </div>
       ) : (
-        buttonText || `Get ${plan.name} - ₦${(plan.price / 100).toLocaleString()}`
+        buttonText || (
+          <>
+            <span className="hidden sm:inline">Get {plan.name} - ₦{(plan.price / 100).toLocaleString()}</span>
+            <span className="sm:hidden">₦{(plan.price / 100).toLocaleString()}</span>
+          </>
+        )
       )}
     </button>
   )
 }
 
-// Payment Success Modal
+// Payment Success Modal - Mobile Optimized
 export function PaymentSuccessModal({ isOpen, onClose, paymentData }) {
   if (!isOpen) return null
 
@@ -237,36 +243,36 @@ export function PaymentSuccessModal({ isOpen, onClose, paymentData }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl p-8 max-w-md w-full text-center"
+        className="bg-white rounded-2xl p-4 sm:p-8 max-w-sm sm:max-w-md w-full text-center"
       >
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Check className="w-8 h-8 text-green-600" />
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <Check className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
           Payment Successful!
         </h2>
         
-        <p className="text-gray-600 mb-6">
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
           Thank you for your purchase. Your {paymentData?.planType || 'card'} is being processed.
         </p>
 
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <div className="text-sm text-gray-600 space-y-2">
-            <div className="flex justify-between">
+        <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="text-xs sm:text-sm text-gray-600 space-y-2">
+            <div className="flex justify-between items-center">
               <span>Amount:</span>
               <span className="font-medium">₦{paymentData?.amount?.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-start">
               <span>Reference:</span>
-              <span className="font-medium">{paymentData?.reference}</span>
+              <span className="font-medium text-right break-all ml-2 text-xs">{paymentData?.reference}</span>
             </div>
           </div>
         </div>
 
         <button
           onClick={onClose}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="w-full bg-blue-600 text-white py-2.5 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
         >
           Continue to Dashboard
         </button>
@@ -275,7 +281,7 @@ export function PaymentSuccessModal({ isOpen, onClose, paymentData }) {
   )
 }
 
-// Payment Error Modal
+// Payment Error Modal - Mobile Optimized
 export function PaymentErrorModal({ isOpen, onClose, error, onRetry }) {
   if (!isOpen) return null
 
@@ -288,31 +294,31 @@ export function PaymentErrorModal({ isOpen, onClose, error, onRetry }) {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl p-8 max-w-md w-full text-center"
+        className="bg-white rounded-2xl p-4 sm:p-8 max-w-sm sm:max-w-md w-full text-center"
       >
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="w-8 h-8 text-red-600" />
+        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
           Payment Failed
         </h2>
         
-        <p className="text-gray-600 mb-6">
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
           {error || 'Something went wrong with your payment. Please try again.'}
         </p>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <button
             onClick={onClose}
-            className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex-1 border border-gray-300 text-gray-700 py-2.5 sm:py-3 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
           >
             Cancel
           </button>
           {onRetry && (
             <button
               onClick={onRetry}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-blue-600 text-white py-2.5 sm:py-3 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
               Try Again
             </button>
@@ -323,7 +329,7 @@ export function PaymentErrorModal({ isOpen, onClose, error, onRetry }) {
   )
 }
 
-// Payment Plan Card Component
+// Payment Plan Card Component - Mobile First Design
 export function PaymentPlanCard({ plan, isPopular, onSelect, loading }) {
   return (
     <motion.div
@@ -331,48 +337,52 @@ export function PaymentPlanCard({ plan, isPopular, onSelect, loading }) {
       whileInView={{ opacity: 1, y: 0 }}
       className={`relative rounded-2xl border-2 overflow-hidden transition-all duration-200 ${
         isPopular 
-          ? 'border-blue-500 shadow-lg scale-105' 
+          ? 'border-blue-500 shadow-lg sm:scale-105' 
           : 'border-gray-200 hover:border-gray-300'
       }`}
     >
       {isPopular && (
-        <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-center py-2 text-sm font-semibold">
+        <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-center py-2 text-xs sm:text-sm font-semibold z-10">
+          <Star className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
           MOST POPULAR
         </div>
       )}
 
-      <div className={`p-8 ${isPopular ? 'pt-12' : ''}`}>
-        <div className="text-center mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+      <div className={`p-4 sm:p-6 lg:p-8 ${isPopular ? 'pt-10 sm:pt-12' : ''}`}>
+        {/* Plan Header */}
+        <div className="text-center mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
           
           {plan.price ? (
             <div>
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
                 ₦{(plan.price / 100).toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">One-time payment</div>
+              <div className="text-xs sm:text-sm text-gray-600">One-time payment</div>
               {plan.monthly && (
                 <div className="mt-2 pt-2 border-t border-gray-200">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs sm:text-sm text-gray-600">
                     + ₦{plan.monthly}/month for premium features
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-3xl font-bold text-gray-900">Custom</div>
+            <div className="text-2xl sm:text-3xl font-bold text-gray-900">Custom</div>
           )}
         </div>
 
-        <ul className="space-y-3 mb-8">
+        {/* Features List */}
+        <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
           {plan.features.map((feature, index) => (
             <li key={index} className="flex items-start">
-              <Check className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-700">{feature}</span>
+              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mr-2 sm:mr-3 mt-0.5 flex-shrink-0" />
+              <span className="text-xs sm:text-sm lg:text-base text-gray-700">{feature}</span>
             </li>
           ))}
         </ul>
 
+        {/* CTA Button */}
         <PaystackPayment
           plan={plan}
           onSuccess={(data) => onSelect?.(plan, data)}
@@ -386,5 +396,73 @@ export function PaymentPlanCard({ plan, isPopular, onSelect, loading }) {
         />
       </div>
     </motion.div>
+  )
+}
+
+// Responsive Payment Plans Grid
+export function PaymentPlansGrid({ plans = paymentPlans, onPlanSelect, loading }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 w-full">
+      {Object.entries(plans).map(([key, plan]) => (
+        <PaymentPlanCard
+          key={key}
+          plan={plan}
+          isPopular={key === 'premium'}
+          onSelect={onPlanSelect}
+          loading={loading}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Mobile-First Payment Summary Component
+export function PaymentSummary({ plan, isSubscription }) {
+  if (!plan) return null
+
+  return (
+    <div className="bg-gray-50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+      <h4 className="font-semibold text-gray-900 mb-3 text-sm sm:text-base">Order Summary</h4>
+      
+      <div className="space-y-2 text-xs sm:text-sm">
+        <div className="flex justify-between items-center">
+          <span className="text-gray-600">{plan.name}</span>
+          <span className="font-medium">
+            {plan.price ? `₦${(plan.price / 100).toLocaleString()}` : 'Custom'}
+          </span>
+        </div>
+        
+        {isSubscription && plan.monthly && (
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Monthly premium features</span>
+            <span className="font-medium">₦{plan.monthly}/month</span>
+          </div>
+        )}
+        
+        <div className="border-t border-gray-200 pt-2 mt-2">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Total</span>
+            <span>
+              {plan.price ? `₦${(plan.price / 100).toLocaleString()}` : 'Contact Sales'}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Quick Payment Button for Mobile
+export function QuickPayButton({ plan, onSuccess, onError, className = '' }) {
+  return (
+    <div className={`fixed bottom-4 left-4 right-4 sm:relative sm:bottom-auto sm:left-auto sm:right-auto ${className}`}>
+      <PaystackPayment
+        plan={plan}
+        onSuccess={onSuccess}
+        onError={onError}
+        buttonClassName="bg-blue-600 text-white hover:bg-blue-700 shadow-lg sm:shadow-none"
+        buttonText={`Pay ₦${(plan.price / 100).toLocaleString()}`}
+      />
+    </div>
   )
 }

@@ -22,117 +22,77 @@ import {
   MoreVertical,
   Calendar,
   MapPin,
-  Activity
+  Activity,
+  Menu,
+  X,
+  ChevronDown
 } from 'lucide-react'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts'
-import { supabase } from '@/lib/supabase'
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [stats, setStats] = useState({
-    totalUsers: 0,
-    activeCards: 0,
-    totalRevenue: 0,
-    monthlyGrowth: 0
+    totalUsers: 1247,
+    activeCards: 892,
+    totalRevenue: 45000,
+    monthlyGrowth: 12.5
   })
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [users] = useState([
+    {
+      id: 1,
+      full_name: 'John Doe',
+      username: 'johndoe',
+      email: 'john@example.com',
+      phone: '+1 234 567 8900',
+      company: 'Tech Corp',
+      job_title: 'Software Engineer',
+      is_active: true,
+      created_at: '2024-01-15T10:00:00Z',
+      profile_image_url: null,
+      user_id: 'user_1'
+    },
+    {
+      id: 2,
+      full_name: 'Sarah Johnson',
+      username: 'sarahj',
+      email: 'sarah@company.com',
+      phone: '+1 234 567 8901',
+      company: 'Design Studio',
+      job_title: 'UI Designer',
+      is_active: true,
+      created_at: '2024-01-20T14:30:00Z',
+      profile_image_url: null,
+      user_id: 'user_2'
+    },
+    {
+      id: 3,
+      full_name: 'Mike Chen',
+      username: 'mikechen',
+      email: 'mike@startup.io',
+      phone: null,
+      company: 'StartupXYZ',
+      job_title: 'Product Manager',
+      is_active: false,
+      created_at: '2024-02-01T09:15:00Z',
+      profile_image_url: null,
+      user_id: 'user_3'
+    }
+  ])
+  const [loading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
-
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true)
-      
-      // Fetch users
-      const { data: usersData, error: usersError } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          subscriptions (*)
-        `)
-        .order('created_at', { ascending: false })
-
-      if (usersError) throw usersError
-
-      setUsers(usersData || [])
-
-      // Calculate stats
-      const totalUsers = usersData?.length || 0
-      const activeCards = usersData?.filter(u => u.is_active).length || 0
-      const totalRevenue = 45000 // Mock data - calculate from payments
-      const monthlyGrowth = 12.5 // Mock data
-
-      setStats({
-        totalUsers,
-        activeCards,
-        totalRevenue,
-        monthlyGrowth
-      })
-
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [showUserActions, setShowUserActions] = useState(null)
 
   const handleUserAction = async (userId, action) => {
-    try {
-      switch (action) {
-        case 'deactivate':
-          await supabase
-            .from('profiles')
-            .update({ is_active: false })
-            .eq('user_id', userId)
-          break
-        case 'activate':
-          await supabase
-            .from('profiles')
-            .update({ is_active: true })
-            .eq('user_id', userId)
-          break
-        case 'delete':
-          await supabase
-            .from('profiles')
-            .delete()
-            .eq('user_id', userId)
-          break
-      }
-      
-      fetchDashboardData()
-    } catch (error) {
-      console.error(`Error ${action} user:`, error)
-    }
+    console.log(`${action} user:`, userId)
+    setShowUserActions(null)
+    // Simulate API call
   }
 
   const exportData = () => {
-    const data = users.map(user => ({
-      name: user.full_name,
-      email: user.email,
-      phone: user.phone,
-      company: user.company,
-      jobTitle: user.job_title,
-      active: user.is_active,
-      createdAt: user.created_at
-    }))
-
-    const csv = [
-      Object.keys(data[0]).join(','),
-      ...data.map(row => Object.values(row).join(','))
-    ].join('\n')
-
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `users_export_${Date.now()}.csv`
-    link.click()
-    URL.revokeObjectURL(url)
+    console.log('Exporting data...')
   }
 
   const filteredUsers = users.filter(user => {
@@ -155,28 +115,66 @@ export default function AdminPanel() {
     { id: 'settings', label: 'Settings', icon: Settings }
   ]
 
+  const chartData = {
+    userGrowth: [
+      { month: 'Jan', users: 120 },
+      { month: 'Feb', users: 180 },
+      { month: 'Mar', users: 250 },
+      { month: 'Apr', users: 320 },
+      { month: 'May', users: 410 },
+      { month: 'Jun', users: 480 }
+    ],
+    revenue: [
+      { month: 'Jan', revenue: 3000 },
+      { month: 'Feb', revenue: 4500 },
+      { month: 'Mar', revenue: 6200 },
+      { month: 'Apr', revenue: 8100 },
+      { month: 'May', revenue: 9800 },
+      { month: 'Jun', revenue: 12000 }
+    ]
+  }
+
+  const recentActivity = [
+    { action: 'New user registered', user: 'john@example.com', time: '2 minutes ago', type: 'user' },
+    { action: 'Card activated', user: 'sarah@company.com', time: '15 minutes ago', type: 'card' },
+    { action: 'Payment received', user: 'Premium Plan - $45', time: '1 hour ago', type: 'payment' },
+    { action: 'Profile updated', user: 'mike@startup.io', time: '2 hours ago', type: 'update' },
+    { action: 'Support ticket', user: 'Issue with QR code', time: '3 hours ago', type: 'support' }
+  ]
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(false)
+      }
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const renderOverview = () => (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-4 lg:space-y-6">
+      {/* Stats Cards - Mobile-optimized grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-3xl font-bold text-primary">{stats.totalUsers.toLocaleString()}</p>
+              <p className="text-xs lg:text-sm text-gray-600 mb-1">Total Users</p>
+              <p className="text-lg lg:text-3xl font-bold text-slate-800">{stats.totalUsers.toLocaleString()}</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-accent" />
+            <div className="w-8 h-8 lg:w-12 lg:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Users className="w-4 h-4 lg:w-6 lg:h-6 text-blue-600" />
             </div>
           </div>
-          <div className="flex items-center mt-4 text-sm">
-            <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+          <div className="flex items-center mt-2 lg:mt-4 text-xs lg:text-sm">
+            <TrendingUp className="w-3 h-3 lg:w-4 lg:h-4 text-green-500 mr-1" />
             <span className="text-green-500 font-medium">+{stats.monthlyGrowth}%</span>
-            <span className="text-gray-500 ml-1">vs last month</span>
           </div>
         </motion.div>
 
@@ -184,21 +182,20 @@ export default function AdminPanel() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Active Cards</p>
-              <p className="text-3xl font-bold text-primary">{stats.activeCards.toLocaleString()}</p>
+              <p className="text-xs lg:text-sm text-gray-600 mb-1">Active Cards</p>
+              <p className="text-lg lg:text-3xl font-bold text-slate-800">{stats.activeCards.toLocaleString()}</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-6 h-6 text-green-600" />
+            <div className="w-8 h-8 lg:w-12 lg:h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-4 h-4 lg:w-6 lg:h-6 text-green-600" />
             </div>
           </div>
-          <div className="flex items-center mt-4 text-sm">
-            <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+          <div className="flex items-center mt-2 lg:mt-4 text-xs lg:text-sm">
+            <TrendingUp className="w-3 h-3 lg:w-4 lg:h-4 text-green-500 mr-1" />
             <span className="text-green-500 font-medium">+8.2%</span>
-            <span className="text-gray-500 ml-1">activation rate</span>
           </div>
         </motion.div>
 
@@ -206,21 +203,20 @@ export default function AdminPanel() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-              <p className="text-3xl font-bold text-primary">${stats.totalRevenue.toLocaleString()}</p>
+              <p className="text-xs lg:text-sm text-gray-600 mb-1">Total Revenue</p>
+              <p className="text-lg lg:text-3xl font-bold text-slate-800">${stats.totalRevenue.toLocaleString()}</p>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-purple-600" />
+            <div className="w-8 h-8 lg:w-12 lg:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="w-4 h-4 lg:w-6 lg:h-6 text-purple-600" />
             </div>
           </div>
-          <div className="flex items-center mt-4 text-sm">
-            <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+          <div className="flex items-center mt-2 lg:mt-4 text-xs lg:text-sm">
+            <TrendingUp className="w-3 h-3 lg:w-4 lg:h-4 text-green-500 mr-1" />
             <span className="text-green-500 font-medium">+15.3%</span>
-            <span className="text-gray-500 ml-1">vs last month</span>
           </div>
         </motion.div>
 
@@ -228,56 +224,71 @@ export default function AdminPanel() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Growth Rate</p>
-              <p className="text-3xl font-bold text-primary">{stats.monthlyGrowth}%</p>
+              <p className="text-xs lg:text-sm text-gray-600 mb-1">Growth Rate</p>
+              <p className="text-lg lg:text-3xl font-bold text-slate-800">{stats.monthlyGrowth}%</p>
             </div>
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-orange-600" />
+            <div className="w-8 h-8 lg:w-12 lg:h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 lg:w-6 lg:h-6 text-orange-600" />
             </div>
           </div>
-          <div className="flex items-center mt-4 text-sm">
-            <Activity className="w-4 h-4 text-blue-500 mr-1" />
+          <div className="flex items-center mt-2 lg:mt-4 text-xs lg:text-sm">
+            <Activity className="w-3 h-3 lg:w-4 lg:h-4 text-blue-500 mr-1" />
             <span className="text-blue-500 font-medium">Monthly</span>
-            <span className="text-gray-500 ml-1">user growth</span>
           </div>
         </motion.div>
       </div>
 
-      {/* Charts */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* Charts - Stacked on mobile, side by side on desktop */}
+      <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
         {/* User Growth Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
-          <h3 className="text-lg font-semibold text-primary mb-6">User Growth</h3>
-          <div className="h-64">
+          <h3 className="text-base lg:text-lg font-semibold text-slate-800 mb-4 lg:mb-6">User Growth</h3>
+          <div className="h-48 lg:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={[
-                { month: 'Jan', users: 120 },
-                { month: 'Feb', users: 180 },
-                { month: 'Mar', users: 250 },
-                { month: 'Apr', users: 320 },
-                { month: 'May', users: 410 },
-                { month: 'Jun', users: 480 }
-              ]}>
+              <AreaChart data={chartData.userGrowth}>
                 <defs>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1E90FF" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#1E90FF" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="users" stroke="#1E90FF" fillOpacity={1} fill="url(#colorUsers)" />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="users" 
+                  stroke="#3B82F6" 
+                  fillOpacity={1} 
+                  fill="url(#colorUsers)" 
+                  strokeWidth={2}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -288,24 +299,34 @@ export default function AdminPanel() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="card p-6"
+          className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
         >
-          <h3 className="text-lg font-semibold text-primary mb-6">Monthly Revenue</h3>
-          <div className="h-64">
+          <h3 className="text-base lg:text-lg font-semibold text-slate-800 mb-4 lg:mb-6">Monthly Revenue</h3>
+          <div className="h-48 lg:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[
-                { month: 'Jan', revenue: 3000 },
-                { month: 'Feb', revenue: 4500 },
-                { month: 'Mar', revenue: 6200 },
-                { month: 'Apr', revenue: 8100 },
-                { month: 'May', revenue: 9800 },
-                { month: 'Jun', revenue: 12000 }
-              ]}>
+              <BarChart data={chartData.revenue}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`${value}`, 'Revenue']} />
-                <Bar dataKey="revenue" fill="#1E90FF" />
+                <XAxis 
+                  dataKey="month" 
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip 
+                  formatter={(value) => [`$${value}`, 'Revenue']}
+                  contentStyle={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #E5E7EB',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}
+                />
+                <Bar dataKey="revenue" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -317,18 +338,12 @@ export default function AdminPanel() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="card p-6"
+        className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6"
       >
-        <h3 className="text-lg font-semibold text-primary mb-6">Recent Activity</h3>
-        <div className="space-y-4">
-          {[
-            { action: 'New user registered', user: 'john@example.com', time: '2 minutes ago', type: 'user' },
-            { action: 'Card activated', user: 'sarah@company.com', time: '15 minutes ago', type: 'card' },
-            { action: 'Payment received', user: 'Premium Plan - $45', time: '1 hour ago', type: 'payment' },
-            { action: 'Profile updated', user: 'mike@startup.io', time: '2 hours ago', type: 'update' },
-            { action: 'Support ticket', user: 'Issue with QR code', time: '3 hours ago', type: 'support' }
-          ].map((activity, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+        <h3 className="text-base lg:text-lg font-semibold text-slate-800 mb-4 lg:mb-6">Recent Activity</h3>
+        <div className="space-y-3 lg:space-y-4">
+          {recentActivity.map((activity, index) => (
+            <div key={index} className="flex items-center justify-between py-2 lg:py-3 border-b border-gray-100 last:border-0">
               <div className="flex items-center space-x-3">
                 <div className={`w-2 h-2 rounded-full ${
                   activity.type === 'user' ? 'bg-blue-400' :
@@ -338,10 +353,10 @@ export default function AdminPanel() {
                 }`}></div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                  <p className="text-xs text-gray-500">{activity.user}</p>
+                  <p className="text-xs text-gray-500 truncate max-w-48 lg:max-w-none">{activity.user}</p>
                 </div>
               </div>
-              <span className="text-xs text-gray-500">{activity.time}</span>
+              <span className="text-xs text-gray-500 whitespace-nowrap ml-2">{activity.time}</span>
             </div>
           ))}
         </div>
@@ -350,18 +365,18 @@ export default function AdminPanel() {
   )
 
   const renderUsers = () => (
-    <div className="space-y-6">
-      {/* Users Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="space-y-4 lg:space-y-6">
+      {/* Users Header - Mobile optimized */}
+      <div className="flex flex-col space-y-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary">Users Management</h2>
-          <p className="text-gray-600">Manage user accounts and profiles</p>
+          <h2 className="text-xl lg:text-2xl font-bold text-slate-800">Users Management</h2>
+          <p className="text-sm lg:text-base text-gray-600">Manage user accounts and profiles</p>
         </div>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center justify-end">
           <button
             onClick={exportData}
-            className="btn-secondary flex items-center"
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors flex items-center text-sm"
           >
             <Download className="w-4 h-4 mr-2" />
             Export
@@ -369,9 +384,9 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="card p-4">
-        <div className="flex flex-col md:flex-row gap-4">
+      {/* Search and Filters - Mobile optimized */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
@@ -379,14 +394,14 @@ export default function AdminPanel() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
           
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm min-w-0 lg:min-w-32"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -395,8 +410,79 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="card overflow-hidden">
+      {/* Mobile Users List */}
+      <div className="block lg:hidden space-y-3">
+        {filteredUsers.map((user) => (
+          <div key={user.id} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-3 flex-1 min-w-0">
+                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                  {user.profile_image_url ? (
+                    <img src={user.profile_image_url} alt="" className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <Users className="w-6 h-6 text-gray-400" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className="text-sm font-medium text-gray-900 truncate">{user.full_name || 'N/A'}</h3>
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full flex-shrink-0 ${
+                      user.is_active 
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {user.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">@{user.username}</p>
+                  <p className="text-xs text-gray-600 truncate mb-1">{user.email}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.company || 'No company'} • {user.job_title || 'No title'}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Created {new Date(user.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserActions(showUserActions === user.id ? null : user.id)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <MoreVertical className="w-4 h-4 text-gray-400" />
+                </button>
+                
+                {showUserActions === user.id && (
+                  <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-36">
+                    <button
+                      onClick={() => window.open(`/profile/${user.username}`, '_blank')}
+                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Profile
+                    </button>
+                    <button
+                      onClick={() => handleUserAction(user.user_id, user.is_active ? 'deactivate' : 'activate')}
+                      className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      {user.is_active ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button
+                      onClick={() => handleUserAction(user.user_id, 'delete')}
+                      className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete User
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table */}
+      <div className="hidden lg:block bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -451,7 +537,7 @@ export default function AdminPanel() {
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => window.open(`/profile/${user.username}`, '_blank')}
-                        className="text-accent hover:text-blue-600"
+                        className="text-blue-600 hover:text-blue-800"
                         title="View Profile"
                       >
                         <Eye className="w-4 h-4" />
@@ -482,38 +568,35 @@ export default function AdminPanel() {
   )
 
   const renderCards = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-primary">Cards Management</h2>
-        <button className="btn-primary">
+        <h2 className="text-xl lg:text-2xl font-bold text-slate-800">Cards Management</h2>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
           Generate Batch
         </button>
       </div>
       
-      {/* Cards stats and management would go here */}
-      <div className="card p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <p className="text-gray-600">Card management functionality coming soon...</p>
       </div>
     </div>
   )
 
   const renderRevenue = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-primary">Revenue Analytics</h2>
+    <div className="space-y-4 lg:space-y-6">
+      <h2 className="text-xl lg:text-2xl font-bold text-slate-800">Revenue Analytics</h2>
       
-      {/* Revenue analytics would go here */}
-      <div className="card p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <p className="text-gray-600">Revenue analytics coming soon...</p>
       </div>
     </div>
   )
 
   const renderSettings = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-primary">System Settings</h2>
+    <div className="space-y-4 lg:space-y-6">
+      <h2 className="text-xl lg:text-2xl font-bold text-slate-800">System Settings</h2>
       
-      {/* System settings would go here */}
-      <div className="card p-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
         <p className="text-gray-600">System settings coming soon...</p>
       </div>
     </div>
@@ -523,7 +606,7 @@ export default function AdminPanel() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-gray-600">Loading admin panel...</p>
         </div>
       </div>
@@ -532,12 +615,28 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Admin Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-max section-padding py-6">
+      {/* Mobile Header with Menu Button */}
+      <div className="lg:hidden bg-white border-b border-gray-200 sticky top-0 z-20">
+        <div className="flex items-center justify-between px-4 py-4">
+          <div>
+            <h1 className="text-lg font-bold text-slate-800">Admin Panel</h1>
+            <p className="text-sm text-gray-600">1necard System</p>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden lg:block bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-primary">Admin Panel</h1>
+              <h1 className="text-2xl font-bold text-slate-800">Admin Panel</h1>
               <p className="text-gray-600">1necard System Administration</p>
             </div>
             <div className="flex items-center space-x-4">
@@ -549,26 +648,42 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      <div className="container-max section-padding py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+          {/* Mobile Sidebar Overlay */}
+          {sidebarOpen && (
+            <div
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
           {/* Sidebar Navigation */}
-          <div className="lg:w-64">
-            <div className="card p-4">
+          <div className={`
+            fixed lg:relative top-0 left-0 h-full lg:h-auto w-64 lg:w-64 z-40 lg:z-0
+            transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+            transition-transform duration-200 ease-in-out lg:transition-none
+            bg-white lg:bg-transparent pt-20 lg:pt-0
+          `}>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 mx-4 lg:mx-0 mt-4 lg:mt-0">
               <nav className="space-y-2">
                 {tabs.map((tab) => {
                   const IconComponent = tab.icon
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                      onClick={() => {
+                        setActiveTab(tab.id)
+                        setSidebarOpen(false) // Close mobile menu after selection
+                      }}
+                      className={`w-full flex items-center px-3 py-3 lg:py-2 rounded-lg text-left transition-colors touch-manipulation ${
                         activeTab === tab.id
-                          ? 'bg-accent text-white'
+                          ? 'bg-blue-600 text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       <IconComponent className="w-5 h-5 mr-3" />
-                      {tab.label}
+                      <span className="font-medium">{tab.label}</span>
                     </button>
                   )
                 })}
@@ -577,7 +692,7 @@ export default function AdminPanel() {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {activeTab === 'overview' && renderOverview()}
             {activeTab === 'users' && renderUsers()}
             {activeTab === 'cards' && renderCards()}

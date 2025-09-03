@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Download, Share2, Copy, Check } from 'lucide-react'
+import { Download, Share2, Copy, Check, X } from 'lucide-react'
 
 // QR Code Generator Component
 export default function QRCodeGenerator({ 
@@ -177,47 +177,50 @@ export default function QRCodeGenerator({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin w-8 h-8 border-4 border-accent border-t-transparent rounded-full"></div>
+      <div className="flex items-center justify-center p-6 sm:p-8">
+        <div className="animate-spin w-6 h-6 sm:w-8 sm:h-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 text-center max-w-sm mx-auto">
+    <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 text-center max-w-sm mx-auto">
       {/* QR Code Display */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         {qrCodeUrl ? (
-          <img 
-            src={qrCodeUrl} 
-            alt="QR Code"
-            className="mx-auto rounded-lg shadow-md"
-            style={{ maxWidth: '100%', height: 'auto' }}
-          />
+          <div className="relative inline-block">
+            <img 
+              src={qrCodeUrl} 
+              alt="QR Code"
+              className="mx-auto rounded-lg shadow-md max-w-full h-auto"
+              style={{ maxWidth: '100%' }}
+            />
+          </div>
         ) : (
           <div 
             className="bg-gray-100 rounded-lg flex items-center justify-center mx-auto"
-            style={{ width: size, height: size }}
+            style={{ width: Math.min(size, 280), height: Math.min(size, 280) }}
           >
-            <span className="text-gray-500">QR Code</span>
+            <span className="text-gray-500 text-sm">QR Code</span>
           </div>
         )}
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:space-x-3">
         <button
           onClick={downloadQRCode}
-          className="flex-1 btn-primary flex items-center justify-center"
+          className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-sm font-medium"
           disabled={!qrCodeUrl}
         >
           <Download className="w-4 h-4 mr-2" />
-          Download
+          <span className="hidden sm:inline">Download</span>
+          <span className="sm:hidden">Download QR</span>
         </button>
         
         <button
           onClick={shareQRCode}
-          className="flex-1 btn-secondary flex items-center justify-center"
+          className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm font-medium"
           disabled={!qrCodeUrl}
         >
           <Share2 className="w-4 h-4 mr-2" />
@@ -226,17 +229,18 @@ export default function QRCodeGenerator({
         
         <button
           onClick={copyToClipboard}
-          className="flex-1 btn-secondary flex items-center justify-center"
+          className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center text-sm font-medium"
         >
           {copied ? (
             <>
               <Check className="w-4 h-4 mr-2 text-green-600" />
-              Copied!
+              <span className="text-green-600">Copied!</span>
             </>
           ) : (
             <>
               <Copy className="w-4 h-4 mr-2" />
-              Copy URL
+              <span className="hidden sm:inline">Copy URL</span>
+              <span className="sm:hidden">Copy</span>
             </>
           )}
         </button>
@@ -259,26 +263,26 @@ export function QRCodeModal({ isOpen, onClose, profileUrl, username }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-primary">Your QR Code</h2>
+      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-sm sm:max-w-md w-full mx-4 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Your QR Code</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
           >
-            ×
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
         
         <QRCodeGenerator 
           profileUrl={profileUrl}
           username={username}
-          size={280}
+          size={Math.min(280, window.innerWidth - 120)} // Responsive size
           includeText={true}
           style="modern"
         />
         
-        <div className="mt-6 text-center">
+        <div className="mt-4 sm:mt-6 text-center px-2">
           <p className="text-sm text-gray-600 mb-2">
             Anyone can scan this code to view your profile
           </p>
@@ -344,29 +348,29 @@ export function BulkQRGenerator({ profiles, onComplete }) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <h3 className="text-xl font-bold text-primary mb-4">Bulk QR Code Generator</h3>
+    <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6">
+      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Bulk QR Code Generator</h3>
       
       {generating ? (
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 mb-2">Generating QR codes...</p>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-gray-600 mb-2 text-sm sm:text-base">Generating QR codes...</p>
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
             <div 
-              className="bg-accent h-2 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">{Math.round(progress)}% complete</p>
+          <p className="text-xs sm:text-sm text-gray-500">{Math.round(progress)}% complete</p>
         </div>
       ) : (
         <div className="text-center">
-          <p className="text-gray-600 mb-6">
-            Generate QR codes for {profiles.length} profiles
+          <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+            Generate QR codes for {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
           </p>
           <button
             onClick={generateBulkQRCodes}
-            className="btn-primary"
+            className="bg-blue-600 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
           >
             Generate & Download All
           </button>

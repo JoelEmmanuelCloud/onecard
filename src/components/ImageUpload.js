@@ -24,10 +24,11 @@ export default function ImageUpload({
   const fileInputRef = useRef(null)
   const cropperRef = useRef(null)
 
+  // Responsive size classes
   const sizeClasses = {
-    small: 'w-16 h-16',
-    medium: 'w-24 h-24', 
-    large: 'w-32 h-32'
+    small: 'w-12 h-12 sm:w-16 sm:h-16',
+    medium: 'w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24', 
+    large: 'w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32'
   }
 
   const validateFile = (file) => {
@@ -210,10 +211,10 @@ export default function ImageUpload({
 
   return (
     <>
-      <div className="space-y-4">
-        {/* Current Image Display */}
-        <div className="flex items-center space-x-4">
-          <div className={`${sizeClasses[size]} rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300`}>
+      <div className="space-y-4 w-full">
+        {/* Current Image Display - Mobile First */}
+        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className={`${sizeClasses[size]} rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300 flex-shrink-0`}>
             {preview ? (
               <img 
                 src={preview} 
@@ -225,27 +226,27 @@ export default function ImageUpload({
             )}
           </div>
           
-          <div className="flex-1">
-            <h4 className="font-medium text-gray-900">Profile Picture</h4>
-            <p className="text-sm text-gray-500">
+          <div className="flex-1 text-center sm:text-left">
+            <h4 className="font-medium text-gray-900 text-sm sm:text-base">Profile Picture</h4>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Upload a photo to personalize your profile
             </p>
             {error && (
-              <p className="text-sm text-red-600 mt-1 flex items-center">
-                <AlertCircle className="w-4 h-4 mr-1" />
-                {error}
+              <p className="text-xs sm:text-sm text-red-600 mt-2 flex items-center justify-center sm:justify-start">
+                <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
+                <span className="break-words">{error}</span>
               </p>
             )}
           </div>
         </div>
 
-        {/* Upload Area */}
+        {/* Upload Area - Responsive */}
         <div
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          className={`relative border-2 border-dashed rounded-lg p-4 sm:p-6 text-center transition-colors ${
             dragActive
               ? 'border-accent bg-accent/5'
               : 'border-gray-300 hover:border-accent hover:bg-gray-50'
@@ -261,24 +262,25 @@ export default function ImageUpload({
           />
           
           <div className="space-y-2">
-            <Upload className="w-8 h-8 text-gray-400 mx-auto" />
+            <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 mx-auto" />
             <div>
-              <p className="text-sm font-medium text-gray-900">
-                Click to upload or drag and drop
+              <p className="text-xs sm:text-sm font-medium text-gray-900">
+                <span className="hidden sm:inline">Click to upload or drag and drop</span>
+                <span className="sm:hidden">Tap to upload photo</span>
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 mt-1">
                 PNG, JPG or WebP up to {Math.round(maxSize / 1024 / 1024)}MB
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3">
+        {/* Action Buttons - Responsive Stack */}
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="flex-1 btn-primary disabled:opacity-50"
+            className="flex-1 btn-primary disabled:opacity-50 flex items-center justify-center py-2.5 sm:py-3 px-4 text-sm sm:text-base"
           >
             <Camera className="w-4 h-4 mr-2" />
             {uploading ? 'Uploading...' : 'Choose Photo'}
@@ -288,7 +290,7 @@ export default function ImageUpload({
             <button
               onClick={removeImage}
               disabled={uploading}
-              className="flex-1 btn-secondary disabled:opacity-50"
+              className="flex-1 btn-secondary disabled:opacity-50 flex items-center justify-center py-2.5 sm:py-3 px-4 text-sm sm:text-base"
             >
               <X className="w-4 h-4 mr-2" />
               Remove
@@ -297,7 +299,7 @@ export default function ImageUpload({
         </div>
       </div>
 
-      {/* Crop Modal */}
+      {/* Crop Modal - Mobile Optimized */}
       <AnimatePresence>
         {cropModalOpen && (
           <motion.div
@@ -310,9 +312,9 @@ export default function ImageUpload({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h3 className="text-lg font-semibold text-primary">Crop Image</h3>
                 <button
                   onClick={() => setCropModalOpen(false)}
@@ -322,9 +324,9 @@ export default function ImageUpload({
                 </button>
               </div>
 
-              {/* Crop Area */}
-              <div className="mb-6">
-                <div className="relative w-64 h-64 mx-auto bg-gray-100 rounded-lg overflow-hidden">
+              {/* Crop Area - Responsive Size */}
+              <div className="mb-4 sm:mb-6">
+                <div className="relative w-48 h-48 sm:w-64 sm:h-64 mx-auto bg-gray-100 rounded-lg overflow-hidden">
                   {preview && (
                     <img 
                       ref={cropperRef}
@@ -334,25 +336,25 @@ export default function ImageUpload({
                     />
                   )}
                   {/* Crop overlay */}
-                  <div className="absolute inset-4 border-2 border-white rounded-full shadow-lg"></div>
+                  <div className="absolute inset-3 sm:inset-4 border-2 border-white rounded-full shadow-lg"></div>
                 </div>
-                <p className="text-sm text-gray-500 text-center mt-2">
+                <p className="text-xs sm:text-sm text-gray-500 text-center mt-2">
                   Adjust the image to fit within the circle
                 </p>
               </div>
 
-              {/* Crop Actions */}
-              <div className="flex space-x-3">
+              {/* Crop Actions - Mobile Stack */}
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <button
                   onClick={() => setCropModalOpen(false)}
-                  className="flex-1 btn-secondary"
+                  className="flex-1 btn-secondary py-2.5 sm:py-3 text-sm sm:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCrop}
                   disabled={uploading}
-                  className="flex-1 btn-primary disabled:opacity-50"
+                  className="flex-1 btn-primary disabled:opacity-50 py-2.5 sm:py-3 text-sm sm:text-base"
                 >
                   {uploading ? (
                     <>
@@ -375,7 +377,7 @@ export default function ImageUpload({
   )
 }
 
-// Bulk Image Upload Component for teams
+// Bulk Image Upload Component - Mobile Optimized
 export function BulkImageUpload({ profiles, onComplete }) {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -435,38 +437,40 @@ export function BulkImageUpload({ profiles, onComplete }) {
   }
 
   return (
-    <div className="card p-6">
+    <div className="card p-4 sm:p-6">
       <h3 className="text-lg font-semibold text-primary mb-4">Bulk Image Upload</h3>
       
       {uploading ? (
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 mb-2">Uploading images...</p>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 mb-2 text-sm sm:text-base">Uploading images...</p>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className="bg-accent h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-500 mt-2">{Math.round(progress)}% complete</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">{Math.round(progress)}% complete</p>
         </div>
       ) : results.length > 0 ? (
         <div className="space-y-2">
-          <h4 className="font-medium text-gray-900">Upload Results:</h4>
-          {results.map((result, index) => (
-            <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
-              <span className="text-sm">{result.profile}</span>
-              <span className={`text-xs px-2 py-1 rounded ${
-                result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {result.success ? 'Success' : 'Failed'}
-              </span>
-            </div>
-          ))}
+          <h4 className="font-medium text-gray-900 text-sm sm:text-base">Upload Results:</h4>
+          <div className="max-h-48 overflow-y-auto">
+            {results.map((result, index) => (
+              <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
+                <span className="text-xs sm:text-sm truncate flex-1 mr-2">{result.profile}</span>
+                <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${
+                  result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {result.success ? 'Success' : 'Failed'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div>
-          <p className="text-gray-600 mb-4">Upload profile images for multiple users</p>
+          <p className="text-gray-600 mb-4 text-sm sm:text-base">Upload profile images for multiple users</p>
           <input
             type="file"
             multiple
@@ -477,7 +481,7 @@ export function BulkImageUpload({ profiles, onComplete }) {
           />
           <label
             htmlFor="bulk-upload"
-            className="btn-primary cursor-pointer inline-flex items-center"
+            className="btn-primary cursor-pointer inline-flex items-center justify-center w-full sm:w-auto py-2.5 sm:py-3 px-4 text-sm sm:text-base"
           >
             <Upload className="w-4 h-4 mr-2" />
             Select Images

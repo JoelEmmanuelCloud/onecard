@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { Menu, X } from 'lucide-react'
 import { PaymentPlanCard, PaymentSuccessModal, PaymentErrorModal, paymentPlans } from '@/components/PaystackPayment'
 import { useAuth } from '@/hooks/useAuth'
 import AuthModal from '@/components/AuthModal'
@@ -15,6 +16,7 @@ export default function PricingPage() {
   const [paymentData, setPaymentData] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
 
@@ -67,14 +69,15 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <a href="/" className="text-2xl font-semibold tracking-wide text-black">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <a href="/" className="text-xl sm:text-2xl font-semibold tracking-wide text-black">
               1necard
             </a>
             
-            <div className="flex items-center space-x-6">
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center space-x-6">
               {isAuthenticated ? (
                 <a
                   href="/dashboard"
@@ -91,22 +94,57 @@ export default function PricingPage() {
                 </button>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="sm:hidden p-2 text-gray-600 hover:text-gray-900"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="sm:hidden border-t border-gray-200 py-4">
+              <div className="space-y-3">
+                {isAuthenticated ? (
+                  <a
+                    href="/dashboard"
+                    className="block px-4 py-2 text-black/80 hover:text-black transition-colors font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </a>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowAuthModal(true)
+                      setMobileMenuOpen(false)
+                    }}
+                    className="block w-full text-left px-4 py-2 text-black/80 hover:text-black transition-colors font-medium"
+                  >
+                    Sign In
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-white to-gray-50 pt-20 pb-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+      <div className="bg-gradient-to-br from-white to-gray-50 pt-12 sm:pt-20 pb-12 sm:pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Simple, transparent pricing
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
               Choose the perfect plan for your networking needs. One-time card purchase with optional premium features.
             </p>
           </motion.div>
@@ -114,9 +152,9 @@ export default function PricingPage() {
       </div>
 
       {/* Pricing Plans */}
-      <div className="py-16">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8 max-w-sm md:max-w-none mx-auto">
             {Object.values(paymentPlans).map((plan, index) => (
               <PaymentPlanCard
                 key={plan.name}
@@ -131,32 +169,32 @@ export default function PricingPage() {
       </div>
 
       {/* Features Comparison */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <div className="py-12 sm:py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Compare features
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 px-4">
               See what's included in each plan
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-sm font-semibold text-gray-900">
                       Features
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center text-sm font-semibold text-gray-900">
                       Basic
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center text-sm font-semibold text-gray-900">
                       Premium
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center text-sm font-semibold text-gray-900">
                       Enterprise
                     </th>
                   </tr>
@@ -175,26 +213,26 @@ export default function PricingPage() {
                     { feature: 'API integration', basic: false, premium: false, enterprise: true },
                   ].map((item, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium text-gray-900">
                         {item.feature}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                         {item.basic ? (
-                          <div className="w-5 h-5 text-green-500 mx-auto">✓</div>
+                          <div className="w-5 h-5 text-green-500 mx-auto text-lg">✓</div>
                         ) : (
                           <div className="w-5 h-5 text-gray-300 mx-auto">—</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                         {item.premium ? (
-                          <div className="w-5 h-5 text-green-500 mx-auto">✓</div>
+                          <div className="w-5 h-5 text-green-500 mx-auto text-lg">✓</div>
                         ) : (
                           <div className="w-5 h-5 text-gray-300 mx-auto">—</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                         {item.enterprise ? (
-                          <div className="w-5 h-5 text-green-500 mx-auto">✓</div>
+                          <div className="w-5 h-5 text-green-500 mx-auto text-lg">✓</div>
                         ) : (
                           <div className="w-5 h-5 text-gray-300 mx-auto">—</div>
                         )}
@@ -209,15 +247,15 @@ export default function PricingPage() {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-16">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <div className="py-12 sm:py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Frequently asked questions
             </h2>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {[
               {
                 question: "How does the payment work?",
@@ -236,16 +274,19 @@ export default function PricingPage() {
                 answer: "We offer a 30-day money-back guarantee for all plans."
               }
             ].map((faq, index) => (
-              <div key={index} className="border-b border-gray-200 pb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div key={index} className="border-b border-gray-200 pb-6 sm:pb-8">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 px-2">
                   {faq.question}
                 </h3>
-                <p className="text-gray-600">{faq.answer}</p>
+                <p className="text-gray-600 px-2 leading-relaxed">{faq.answer}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Bottom spacing for mobile */}
+      <div className="h-8 sm:h-0"></div>
 
       {/* Modals */}
       <AuthModal
