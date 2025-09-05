@@ -12,12 +12,118 @@ import {
   AlertCircle,
   CheckCircle,
   Loader,
-  ArrowRight
+  ArrowRight,
+  Check,
+  X
 } from 'lucide-react'
 import { signUp, signIn, resetPassword } from '@/lib/supabase'
 import SocialAuth from '@/components/SocialAuth'
 
-// Sign In Form Component
+// Password strength checker
+const validatePassword = (password) => {
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    noSpaces: !/\s/.test(password)
+  }
+
+  const score = Object.values(checks).filter(Boolean).length
+  let strength = 'weak'
+  
+  if (score >= 5) strength = 'strong'
+  else if (score >= 3) strength = 'medium'
+
+  return { checks, score, strength, isValid: score >= 4 }
+}
+
+// Password Requirements Component
+function PasswordRequirements({ password, visible = true }) {
+  if (!visible) return null
+
+  const { checks } = validatePassword(password)
+
+  const requirements = [
+    { key: 'length', label: 'At least 8 characters', met: checks.length },
+    { key: 'uppercase', label: 'One uppercase letter', met: checks.uppercase },
+    { key: 'lowercase', label: 'One lowercase letter', met: checks.lowercase },
+    { key: 'number', label: 'One number', met: checks.number },
+    { key: 'special', label: 'One special character (!@#$%^&*)', met: checks.special },
+    { key: 'noSpaces', label: 'No spaces', met: checks.noSpaces }
+  ]
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+    >
+      <p className="text-xs font-medium text-gray-700 mb-2">Password must contain:</p>
+      <div className="space-y-1">
+        {requirements.map((req) => (
+          <div key={req.key} className="flex items-center text-xs">
+            {req.met ? (
+              <Check className="w-3 h-3 text-green-600 mr-2 flex-shrink-0" />
+            ) : (
+              <X className="w-3 h-3 text-gray-400 mr-2 flex-shrink-0" />
+            )}
+            <span className={req.met ? 'text-green-700' : 'text-gray-600'}>
+              {req.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  )
+}
+
+// Password Strength Indicator
+function PasswordStrengthIndicator({ password }) {
+  const { strength, score } = validatePassword(password)
+  
+  if (!password) return null
+
+  const colors = {
+    weak: 'bg-red-500',
+    medium: 'bg-yellow-500',
+    strong: 'bg-green-500'
+  }
+
+  const labels = {
+    weak: 'Weak',
+    medium: 'Medium',
+    strong: 'Strong'
+  }
+
+  return (
+    <div className="mt-2">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs text-gray-600">Password strength</span>
+        <span className={`text-xs font-medium ${
+          strength === 'strong' ? 'text-green-600' : 
+          strength === 'medium' ? 'text-yellow-600' : 'text-red-600'
+        }`}>
+          {labels[strength]}
+        </span>
+      </div>
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5, 6].map((level) => (
+          <div
+            key={level}
+            className={`h-1 flex-1 rounded-full ${
+              level <= score ? colors[strength] : 'bg-gray-200'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Sign In Form Component (unchanged)
 export function SignInForm({ onSuccess, switchToSignUp, switchToReset }) {
   const [formData, setFormData] = useState({
     email: '',
@@ -183,7 +289,7 @@ export function SignInForm({ onSuccess, switchToSignUp, switchToReset }) {
   )
 }
 
-// Sign Up Form Component
+// Enhanced Sign Up Form Component with Strong Password Requirements
 export function SignUpForm({ onSuccess, switchToSignIn }) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -196,6 +302,7 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e) => {
@@ -211,8 +318,17 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
     }
 
     // Validate password strength
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    const { isValid, checks } = validatePassword(formData.password)
+    if (!isValid) {
+      const missingRequirements = []
+      if (!checks.length) missingRequirements.push('at least 8 characters')
+      if (!checks.uppercase) missingRequirements.push('an uppercase letter')
+      if (!checks.lowercase) missingRequirements.push('a lowercase letter')
+      if (!checks.number) missingRequirements.push('a number')
+      if (!checks.special) missingRequirements.push('a special character')
+      if (!checks.noSpaces) missingRequirements.push('no spaces')
+      
+      setError(`Password must contain ${missingRequirements.join(', ')}`)
       setLoading(false)
       return
     }
@@ -258,6 +374,18 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
       ...formData,
       [e.target.name]: e.target.value
     })
+  }
+
+  const handlePasswordFocus = () => {
+    setShowPasswordRequirements(true)
+  }
+
+  const handlePasswordBlur = () => {
+    // Keep requirements visible if password is not strong enough
+    const { isValid } = validatePassword(formData.password)
+    if (isValid) {
+      setShowPasswordRequirements(false)
+    }
   }
 
   return (
@@ -333,7 +461,7 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
           </div>
         </div>
 
-        {/* Password Field */}
+        {/* Password Field with Enhanced Validation */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Password
@@ -348,6 +476,8 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
               required
               value={formData.password}
               onChange={handleChange}
+              onFocus={handlePasswordFocus}
+              onBlur={handlePasswordBlur}
               className="block w-full pl-9 sm:pl-10 pr-10 sm:pr-12 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base transition-colors duration-200"
               placeholder="Create a secure password"
             />
@@ -363,6 +493,16 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
               )}
             </button>
           </div>
+          
+          {/* Password Strength Indicator */}
+          <PasswordStrengthIndicator password={formData.password} />
+          
+          {/* Password Requirements */}
+          <AnimatePresence>
+            {showPasswordRequirements && (
+              <PasswordRequirements password={formData.password} />
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Confirm Password Field */}
@@ -395,6 +535,23 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
               )}
             </button>
           </div>
+          
+          {/* Password Match Indicator */}
+          {formData.confirmPassword && (
+            <div className="mt-2 flex items-center text-xs">
+              {formData.password === formData.confirmPassword ? (
+                <>
+                  <Check className="w-3 h-3 text-green-600 mr-1" />
+                  <span className="text-green-700">Passwords match</span>
+                </>
+              ) : (
+                <>
+                  <X className="w-3 h-3 text-red-600 mr-1" />
+                  <span className="text-red-700">Passwords don't match</span>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Error Message */}
@@ -446,7 +603,7 @@ export function SignUpForm({ onSuccess, switchToSignIn }) {
   )
 }
 
-// Password Reset Form Component
+// Password Reset Form Component (unchanged)
 export function PasswordResetForm({ onSuccess, switchToSignIn }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
