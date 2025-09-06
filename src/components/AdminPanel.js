@@ -620,7 +620,7 @@ export default function AdminPanel() {
         <div className="flex items-center justify-between px-4 py-4">
           <div>
             <h1 className="text-lg font-bold text-slate-800">Admin Panel</h1>
-            <p className="text-sm text-gray-600">1necard System</p>
+            <p className="text-sm text-gray-600">Onecard System</p>
           </div>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -637,7 +637,7 @@ export default function AdminPanel() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-800">Admin Panel</h1>
-              <p className="text-gray-600">1necard System Administration</p>
+              <p className="text-gray-600">Onecard System Administration</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">

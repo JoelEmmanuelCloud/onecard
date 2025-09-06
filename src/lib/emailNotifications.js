@@ -5,7 +5,7 @@ import { supabase } from './supabase'
 const POSTMARK_CONFIG = {
   serverToken: process.env.POSTMARK_SERVER_TOKEN,
   fromEmail: process.env.FROM_EMAIL || 'noreply@1necard.com',
-  fromName: process.env.FROM_NAME || '1necard'
+  fromName: process.env.FROM_NAME || 'Onecard'
 }
 
 // Postmark template aliases (set these up in your Postmark dashboard)

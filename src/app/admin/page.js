@@ -123,10 +123,10 @@ export default function AdminPage() {
             <p className="text-xs md:text-sm text-gray-500">
               If you believe this is an error, please contact support at{' '}
               <a 
-                href="mailto:support@1necard.com" 
+                href="mailto:support@1necard.co" 
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                support@1necard.com
+                support@1necard.co
               </a>
             </p>
           </div>

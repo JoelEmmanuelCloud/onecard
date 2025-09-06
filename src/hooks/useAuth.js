@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase, getCurrentUser, signOut as supabaseSignOut } from '@/lib/supabase'
+import { supabase,signOut as supabaseSignOut } from '@/lib/supabase'
 
 const AuthContext = createContext({})
 
@@ -100,9 +100,12 @@ export function AuthProvider({ children }) {
   }
 
 // Update the createUserProfile function in your AuthProvider.jsx
+// Updated createUserProfile function for AuthProvider.jsx
 const createUserProfile = async (user) => {
   try {
-    // Extract name from user metadata or email with better fallbacks
+    console.log('Creating profile for user:', user.id, user.email)
+    
+    // Extract name from user metadata with better fallbacks
     const fullName = user.user_metadata?.full_name || 
                     user.user_metadata?.name || 
                     user.user_metadata?.display_name || 
@@ -119,17 +122,40 @@ const createUserProfile = async (user) => {
                     fullName.split(' ').slice(1).join(' ') || 
                     ''
     
-    // Generate unique username with better error handling
+    // Generate unique username with proper error handling
     let username
-    try {
-      const { generateUsername } = await import('@/lib/supabase')
-      username = await generateUsername(firstName, lastName || `user${Date.now()}`)
-    } catch (usernameError) {
-      console.error('Error generating username:', usernameError)
-      // Fallback username generation
-      const timestamp = Date.now().toString().slice(-6)
-      const cleanEmail = user.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || 'user'
-      username = `${cleanEmail}${timestamp}`.toLowerCase().slice(0, 20)
+    const timestamp = Date.now().toString().slice(-6)
+    const cleanEmail = user.email?.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || 'user'
+    let baseUsername = `${cleanEmail}${timestamp}`.toLowerCase().slice(0, 20)
+    
+    // Check if username exists and generate unique one
+    let counter = 1
+    username = baseUsername
+    
+    while (true) {
+      try {
+        const { data: existingUser, error: checkError } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', username)
+          .single()
+        
+        if (checkError && checkError.code === 'PGRST116') {
+          // No user found with this username, it's available
+          break
+        } else if (existingUser) {
+          // Username exists, try with counter
+          username = `${baseUsername}${counter}`
+          counter++
+        } else if (checkError) {
+          console.error('Error checking username:', checkError)
+          // If there's an error, use the current username and hope for the best
+          break
+        }
+      } catch (error) {
+        console.error('Error in username check:', error)
+        break
+      }
     }
 
     const profileData = {
@@ -148,7 +174,7 @@ const createUserProfile = async (user) => {
       updated_at: new Date().toISOString()
     }
 
-    console.log('Creating profile with data:', profileData)
+    console.log('Attempting to create profile with data:', profileData)
 
     const { data, error: profileError } = await supabase
       .from('profiles')
@@ -159,6 +185,14 @@ const createUserProfile = async (user) => {
     if (profileError) {
       console.error('Error creating profile:', profileError)
       setError('Failed to create user profile: ' + profileError.message)
+      
+      // Log detailed error for debugging
+      console.error('Profile creation error details:', {
+        code: profileError.code,
+        message: profileError.message,
+        details: profileError.details,
+        hint: profileError.hint
+      })
     } else {
       console.log('Profile created successfully:', data)
     }

@@ -38,7 +38,7 @@ export default function AuthPage() {
               href="/" 
               className="text-xl sm:text-2xl font-semibold tracking-wide text-black hover:text-gray-700 transition-colors duration-200"
             >
-              1necard
+              Onecard
             </a>
 
             {/* Back to Home Link - Responsive */}

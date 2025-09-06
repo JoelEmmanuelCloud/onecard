@@ -5,7 +5,7 @@ import { AuthProvider } from '@/hooks/useAuth'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: '1necard - Smart Contact Cards',
+  title: 'Onecard - Smart Contact Cards',
   description: 'Professional networking simplified with smart NFC contact cards',
 }
 

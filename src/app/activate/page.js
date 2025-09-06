@@ -113,7 +113,7 @@ export default function ActivatePage() {
           Activate Your Card
         </h1>
         <p className="text-base md:text-lg text-gray-600 px-4 md:px-0">
-          Enter the card ID found on the back of your 1necard
+          Enter the card ID found on the back of your Onecard
         </p>
       </div>
 
@@ -208,7 +208,7 @@ export default function ActivatePage() {
           Card Activated!
         </h1>
         <p className="text-base md:text-lg text-gray-600 px-4 md:px-0">
-          Your 1necard is now linked to your account and ready to use.
+          Your Onecard is now linked to your account and ready to use.
         </p>
       </div>
 

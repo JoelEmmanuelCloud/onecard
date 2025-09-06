@@ -21,8 +21,8 @@ export async function POST(request) {
       const msg = {
         to: to,
         from: from || {
-          email: process.env.FROM_EMAIL || 'noreply@1necard.com',
-          name: process.env.FROM_NAME || '1necard'
+          email: process.env.FROM_EMAIL || 'noreply@1necard.co',
+          name: process.env.FROM_NAME || 'Onecard'
         },
         subject: subject,
         html: html,
@@ -38,7 +38,7 @@ export async function POST(request) {
       const client = new postmark.ServerClient(process.env.POSTMARK_SERVER_TOKEN)
 
       await client.sendEmail({
-        From: from?.email || process.env.FROM_EMAIL || 'noreply@1necard.com',
+        From: from?.email || process.env.FROM_EMAIL || 'noreply@1necard.co',
         To: to,
         Subject: subject,
         HtmlBody: html,
@@ -53,7 +53,7 @@ export async function POST(request) {
       const resend = new Resend(process.env.RESEND_API_KEY)
 
       await resend.emails.send({
-        from: from?.email || 'noreply@1necard.com',
+        from: from?.email || 'noreply@1necard.co',
         to: to,
         subject: subject,
         html: html,
@@ -74,7 +74,7 @@ export async function POST(request) {
       })
 
       await mg.messages.create(process.env.MAILGUN_DOMAIN, {
-        from: from?.email || 'noreply@1necard.com',
+        from: from?.email || 'noreply@1necard.co',
         to: to,
         subject: subject,
         html: html,

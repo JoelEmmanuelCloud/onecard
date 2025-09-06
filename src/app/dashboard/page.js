@@ -542,7 +542,7 @@ END:VCARD`
                       <div className="min-w-0 flex-1">
                         <h3 className="font-medium text-gray-900">Profile URL</h3>
                         <p className="text-sm text-gray-600 break-all sm:break-normal">
-                          {profile?.username ? `1necard.com/${profile.username}` : 'Not set'}
+                          {profile?.username ? `1necard.co/${profile.username}` : 'Not set'}
                         </p>
                       </div>
                       <button className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700 self-start sm:self-auto">

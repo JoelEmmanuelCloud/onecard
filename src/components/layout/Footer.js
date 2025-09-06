@@ -52,19 +52,19 @@ export default function OptimizedMinimalFooter() {
   const socialLinks = [
     {
       name: 'Twitter',
-      href: 'https://twitter.com/1necard',
+      href: 'https://twitter.com/Onecard',
       icon: Twitter,
       color: 'hover:bg-blue-500'
     },
     {
       name: 'LinkedIn',
-      href: 'https://linkedin.com/company/1necard',
+      href: 'https://linkedin.com/company/Onecard',
       icon: Linkedin,
       color: 'hover:bg-blue-600'
     },
     {
       name: 'Instagram',
-      href: 'https://instagram.com/1necard',
+      href: 'https://instagram.com/Onecard',
       icon: Instagram,
       color: 'hover:bg-pink-500'
     }
@@ -109,7 +109,7 @@ export default function OptimizedMinimalFooter() {
                   </div>
                   <div>
                     <div className="text-xs sm:text-sm text-white/70">Email us</div>
-                    <div className="text-sm sm:text-base font-medium">hello@1necard.com</div>
+                    <div className="text-sm sm:text-base font-medium">hello@1necard.co</div>
                   </div>
                 </div>
                 

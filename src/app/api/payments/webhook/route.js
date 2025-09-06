@@ -421,9 +421,9 @@ async function sendSubscriptionCancelledEmail(email, data) {
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2>Hi ${data.name}!</h2>
-            <p>Your 1necard subscription has been cancelled as of ${data.cancelledAt}.</p>
+            <p>Your Onecard subscription has been cancelled as of ${data.cancelledAt}.</p>
             <p>You can reactivate your subscription anytime from your dashboard.</p>
-            <p>Thank you for using 1necard!</p>
+            <p>Thank you for using Onecard!</p>
           </div>
         `
       })

@@ -96,7 +96,7 @@ export default function QRCodeGenerator({
         ctx.fillStyle = getQRColors().dark
         ctx.font = 'bold 16px Inter, sans-serif'
         ctx.textAlign = 'center'
-        ctx.fillText('1necard', canvas.width / 2, 25)
+        ctx.fillText('Onecard', canvas.width / 2, 25)
         
         if (includeText && username) {
           // Add username/text below QR
@@ -151,7 +151,7 @@ export default function QRCodeGenerator({
         const file = new File([blob], `${username}_qr_code.png`, { type: 'image/png' })
         
         await navigator.share({
-          title: `${username}'s 1necard QR Code`,
+          title: `${username}'s Onecard QR Code`,
           text: 'Scan this QR code to connect with me!',
           files: [file]
         })

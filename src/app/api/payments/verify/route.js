@@ -211,7 +211,7 @@ async function sendPaymentConfirmationEmail(payment) {
                 <p><strong>Date:</strong> ${new Date(payment.paid_at).toLocaleDateString()}</p>
               </div>
               <p>If you have any questions, please contact our support team.</p>
-              <p>Best regards,<br>The 1necard Team</p>
+              <p>Best regards,<br>The Onecard Team</p>
             </div>
           </div>
         `

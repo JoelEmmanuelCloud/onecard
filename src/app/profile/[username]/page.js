@@ -315,7 +315,7 @@ END:VCARD`
               <p className={`text-xs ${subtextColor}`}>
                 Powered by{' '}
                 <span className={isLightTemplate ? 'text-accent font-semibold' : 'text-white font-semibold'}>
-                  1necard
+                  Onecard
                 </span>
               </p>
             </motion.div>
