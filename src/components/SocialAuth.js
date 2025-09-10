@@ -16,18 +16,14 @@ const BrandLogo = ({ src, alt, className = "w-4 h-4 sm:w-5 sm:h-5" }) => (
 )
 
 export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboard' }) {
-  const [loading, setLoading] = useState({
-    google: false,
-    apple: false,
-    github: false
-  })
+  const [loading, setLoading] = useState(false)
 
-  const handleSocialLogin = async (provider) => {
+  const handleGoogleLogin = async () => {
     try {
-      setLoading(prev => ({ ...prev, [provider]: true }))
+      setLoading(true)
 
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}${redirectUrl}`,
           queryParams: {
@@ -43,68 +39,36 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
       onSuccess?.(data)
 
     } catch (error) {
-      console.error(`${provider} login error:`, error)
+      console.error('Google login error:', error)
       onError?.(error.message)
     } finally {
-      setLoading(prev => ({ ...prev, [provider]: false }))
+      setLoading(false)
     }
   }
 
-  const socialProviders = [
-    {
-      name: 'google',
-      label: 'Continue with Google',
-      logoUrl: 'https://cdn.simpleicons.org/google/white',
-      color: 'bg-red-500 hover:bg-red-600 focus:ring-red-500',
-      textColor: 'text-white'
-    },
-    {
-      name: 'apple',
-      label: 'Continue with Apple',
-      logoUrl: 'https://cdn.simpleicons.org/apple/white',
-      color: 'bg-black hover:bg-gray-800 focus:ring-gray-800',
-      textColor: 'text-white'
-    },
-    {
-      name: 'github',
-      label: 'Continue with GitHub',
-      logoUrl: 'https://cdn.simpleicons.org/github/white',
-      color: 'bg-gray-800 hover:bg-gray-900 focus:ring-gray-800',
-      textColor: 'text-white'
-    }
-  ]
-
   return (
     <div className="space-y-2 sm:space-y-3">
-      {socialProviders.map((provider, index) => {
-        const isLoading = loading[provider.name]
-        const isAnyLoading = Object.values(loading).some(Boolean)
-        
-        return (
-          <motion.button
-            key={provider.name}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.2 }}
-            onClick={() => handleSocialLogin(provider.name)}
-            disabled={isAnyLoading}
-            className={`w-full flex items-center justify-center py-2.5 sm:py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${provider.color} ${provider.textColor} disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base`}
-          >
-            {isLoading ? (
-              <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2 sm:mr-3" />
-            ) : (
-              <BrandLogo 
-                src={provider.logoUrl} 
-                alt={`${provider.name} logo`}
-                className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" 
-              />
-            )}
-            <span className="truncate">
-              {isLoading ? 'Connecting...' : provider.label}
-            </span>
-          </motion.button>
-        )
-      })}
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        onClick={handleGoogleLogin}
+        disabled={loading}
+        className="w-full flex items-center justify-center py-2.5 sm:py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-red-500 hover:bg-red-600 focus:ring-red-500 text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base"
+      >
+        {loading ? (
+          <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2 sm:mr-3" />
+        ) : (
+          <BrandLogo 
+            src="https://cdn.simpleicons.org/google/white" 
+            alt="Google logo"
+            className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" 
+          />
+        )}
+        <span className="truncate">
+          {loading ? 'Connecting...' : 'Continue with Google'}
+        </span>
+      </motion.button>
       
       <div className="relative my-4 sm:my-6">
         <div className="absolute inset-0 flex items-center">
@@ -120,9 +84,7 @@ export default function SocialAuth({ onSuccess, onError, redirectUrl = '/dashboa
 
 // Social Login Button Component (for individual use)
 export function SocialLoginButton({ 
-  provider, 
-  label, 
-  logoUrl,
+  label = 'Continue with Google',
   className = '',
   onSuccess,
   onError 
@@ -134,7 +96,7 @@ export function SocialLoginButton({
       setLoading(true)
       
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: provider,
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/dashboard`,
         }
@@ -144,7 +106,7 @@ export function SocialLoginButton({
       onSuccess?.(data)
 
     } catch (error) {
-      console.error(`${provider} login error:`, error)
+      console.error('Google login error:', error)
       onError?.(error.message)
     } finally {
       setLoading(false)
@@ -161,8 +123,8 @@ export function SocialLoginButton({
         <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2" />
       ) : (
         <BrandLogo 
-          src={logoUrl} 
-          alt={`${provider} logo`}
+          src="https://cdn.simpleicons.org/google/white" 
+          alt="Google logo"
           className="w-4 h-4 sm:w-5 sm:h-5 mr-2" 
         />
       )}
@@ -175,114 +137,84 @@ export function SocialLoginButton({
 
 // Social Account Linking Component (for settings)
 export function SocialAccountLinking({ userId }) {
-  const [linkedAccounts, setLinkedAccounts] = useState({})
-  const [loading, setLoading] = useState({})
+  const [isLinked, setIsLinked] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleLinkAccount = async (provider) => {
+  const handleLinkAccount = async () => {
     try {
-      setLoading(prev => ({ ...prev, [provider]: true }))
+      setLoading(true)
 
       const { data, error } = await supabase.auth.linkIdentity({
-        provider: provider
+        provider: 'google'
       })
 
       if (error) throw error
 
-      setLinkedAccounts(prev => ({ ...prev, [provider]: true }))
+      setIsLinked(true)
 
     } catch (error) {
-      console.error(`Error linking ${provider}:`, error)
+      console.error('Error linking Google:', error)
     } finally {
-      setLoading(prev => ({ ...prev, [provider]: false }))
+      setLoading(false)
     }
   }
 
-  const handleUnlinkAccount = async (provider) => {
+  const handleUnlinkAccount = async () => {
     try {
-      setLoading(prev => ({ ...prev, [provider]: true }))
+      setLoading(true)
 
       const { data, error } = await supabase.auth.unlinkIdentity({
-        provider: provider
+        provider: 'google'
       })
 
       if (error) throw error
 
-      setLinkedAccounts(prev => ({ ...prev, [provider]: false }))
+      setIsLinked(false)
 
     } catch (error) {
-      console.error(`Error unlinking ${provider}:`, error)
+      console.error('Error unlinking Google:', error)
     } finally {
-      setLoading(prev => ({ ...prev, [provider]: false }))
+      setLoading(false)
     }
   }
-
-  const socialProviders = [
-    { 
-      name: 'google', 
-      label: 'Google', 
-      logoUrl: 'https://cdn.simpleicons.org/google'
-    },
-    { 
-      name: 'apple', 
-      label: 'Apple', 
-      logoUrl: 'https://cdn.simpleicons.org/apple'
-    },
-    { 
-      name: 'github', 
-      label: 'GitHub', 
-      logoUrl: 'https://cdn.simpleicons.org/github'
-    }
-  ]
 
   return (
     <div className="card p-4 sm:p-6">
       <h3 className="text-base sm:text-lg font-semibold text-primary mb-3 sm:mb-4">Connected Accounts</h3>
-      <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Link your social accounts for easier sign-in</p>
+      <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Link your Google account for easier sign-in</p>
       
-      <div className="space-y-3 sm:space-y-4">
-        {socialProviders.map((provider) => {
-          const isLinked = linkedAccounts[provider.name]
-          const isLoading = loading[provider.name]
-          
-          return (
-            <div 
-              key={provider.name} 
-              className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors duration-200"
-            >
-              <div className="flex items-center min-w-0 flex-1">
-                <BrandLogo 
-                  src={provider.logoUrl} 
-                  alt={`${provider.name} logo`}
-                  className="w-5 h-5 sm:w-6 sm:h-6 mr-3 flex-shrink-0" 
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{provider.label}</p>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    {isLinked ? 'Connected' : 'Not connected'}
-                  </p>
-                </div>
-              </div>
-              
-              <button
-                onClick={() => isLinked ? handleUnlinkAccount(provider.name) : handleLinkAccount(provider.name)}
-                disabled={isLoading}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm flex-shrink-0 ml-3 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                  isLinked
-                    ? 'bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500'
-                    : 'bg-accent text-white hover:bg-blue-600 focus:ring-blue-500'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                {isLoading ? (
-                  <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-                ) : isLinked ? (
-                  'Disconnect'
-                ) : (
-                  'Connect'
-                )}
-              </button>
-            </div>
-          )
-        })}
+      <div className="flex items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors duration-200">
+        <div className="flex items-center min-w-0 flex-1">
+          <BrandLogo 
+            src="https://cdn.simpleicons.org/google" 
+            alt="Google logo"
+            className="w-5 h-5 sm:w-6 sm:h-6 mr-3 flex-shrink-0" 
+          />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-gray-900 text-sm sm:text-base truncate">Google</p>
+            <p className="text-xs sm:text-sm text-gray-500">
+              {isLinked ? 'Connected' : 'Not connected'}
+            </p>
+          </div>
+        </div>
+        
+        <button
+          onClick={isLinked ? handleUnlinkAccount : handleLinkAccount}
+          disabled={loading}
+          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm flex-shrink-0 ml-3 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            isLinked
+              ? 'bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500'
+              : 'bg-accent text-white hover:bg-blue-600 focus:ring-blue-500'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {loading ? (
+            <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+          ) : isLinked ? (
+            'Disconnect'
+          ) : (
+            'Connect'
+          )}
+        </button>
       </div>
     </div>
   )
