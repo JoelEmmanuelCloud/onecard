@@ -9,17 +9,20 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.56.1",
     "framer-motion": "^12.23.12",
     "jszip": "^3.10.1",
     "lucide-react": "^0.542.0",
+    "mailgun.js": "^12.0.3",
     "next": "15.5.2",
     "postmark": "^4.0.5",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "recharts": "^3.1.2"
+    "recharts": "^3.1.2",
+    "resend": "^6.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
